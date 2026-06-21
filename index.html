@@ -450,202 +450,64 @@ function switchTab(tab){
 async function loadData(){try{if(G.tab==="twse")await loadTWSE();else if(G.tab==="tpex")await loadTPEx();else await loadWatch();}catch(e){serr("載入失敗："+e.message);console.error(e);}}
 function reload(){G.rows[G.tab]=[];loadData();}
 function getTblData(){
-  var rows=getRows();
-  var h=COLS.map(function(c){return c.lb;});
-  var d=rows.map(function(r,i){return[
-    i+1,r.sid,r.name||"",r.ind||"",
-    r.close!=null?parseFloat(r.close).toFixed(2):"",
-    r.chg!=null?(r.chg>0?"+":"")+parseFloat(r.chg).toFixed(2):"",
-    r.pct!=null?parseFloat(r.pct).toFixed(2)+"%":"",
-    r.eps!=null?parseFloat(r.eps).toFixed(2):"",
-    r.qoq!=null?parseFloat(r.qoq).toFixed(2)+"%":"",
-    r.yoy!=null?parseFloat(r.yoy).toFixed(2)+"%":"",
-    r.cumeps!=null?parseFloat(r.cumeps).toFixed(2):"",
-    r.cumy!=null?parseFloat(r.cumy).toFixed(2)+"%":""
-  ];});
-  return{h:h,d:d};
+var rows=getRows();
+var h=COLS.map(function(c){return c.lb;});
+var d=rows.map(function(r,i){return[
+i+1,r.sid,r.name||"",r.ind||"",
+r.close!=null?parseFloat(r.close).toFixed(2):"",
+r.chg!=null?(r.chg>0?"+":"")+parseFloat(r.chg).toFixed(2):"",
+r.pct!=null?parseFloat(r.pct).toFixed(2)+"%":"",
+r.eps!=null?parseFloat(r.eps).toFixed(2):"",
+r.qoq!=null?parseFloat(r.qoq).toFixed(2)+"%":"",
+r.yoy!=null?parseFloat(r.yoy).toFixed(2)+"%":"",
+r.cumeps!=null?parseFloat(r.cumeps).toFixed(2):"",
+r.cumy!=null?parseFloat(r.cumy).toFixed(2)+"%":""
+];});
+return{h:h,d:d};
 }
 function escCSV(v){var s=String(v==null?"":v);return(s.indexOf(",")>=0||s.indexOf('"')>=0)?'"'+s.replace(/"/g,'""')+'"':s;}
 function dlCSV(){
-  var td=getTblData(),csv="\uFEFF"+td.h.join(",")+"
-";
-  td.d.forEach(function(row){csv+=row.map(escCSV).join(",")+"
-";});
-  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));
-  a.download="台股EPS_"+LATEST_Q+".csv";a.click();
+var td=getTblData(),csv="\uFEFF"+td.h.join(",")+"\n";
+td.d.forEach(function(row){csv+=row.map(escCSV).join(",")+"\n";});
+var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));
+a.download="\u53f0\u80a1EPS_"+LATEST_Q+".csv";a.click();
 }
 function dlXLS(){
-  var td=getTblData();
-  var x='<?xml version="1.0" encoding="UTF-8"?>
-<?mso-application progid="Excel.Sheet"?>
-';
-  x+='<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
-';
-  x+='<Worksheet ss:Name="EPS排行"><Table>
-';
-  [td.h].concat(td.d).forEach(function(row){
-    x+="<Row>";
-    row.forEach(function(v){var s=String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");x+='<Cell><Data ss:Type="String">'+s+"</Data></Cell>";});
-    x+="</Row>
-";
-  });
-  x+="</Table></Worksheet></Workbook>";
-  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([x],{type:"application/vnd.ms-excel;charset=utf-8;"}));
-  a.download="台股EPS_"+LATEST_Q+".xls";a.click();
+var td=getTblData();
+var x='<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n';
+x+='<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+x+='<Worksheet ss:Name="EPS\u6392\u884c"><Table>\n';
+[td.h].concat(td.d).forEach(function(row){
+x+="<Row>";
+row.forEach(function(v){var s=String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");x+='<Cell><Data ss:Type="String">'+s+"</Data></Cell>";});
+x+="</Row>\n";
+});
+x+="</Table></Worksheet></Workbook>";
+var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([x],{type:"application/vnd.ms-excel;charset=utf-8;"}));
+a.download="\u53f0\u80a1EPS_"+LATEST_Q+".xls";a.click();
 }
 
 var MO={row:null,yr:4,hist:[]};
 function closeMo(){document.getElementById("mo").style.display="none";document.body.style.overflow="";}
 
 function dlDetailCSV(){
-  var row=MO.row,hist=MO.hist;if(!hist||!hist.length)return;
-  var csv="\uFEFF季度,EPS(元),季增率,年增率
-";
-  hist.slice().reverse().forEach(function(h){csv+=h.label+","+f2(h.eps)+","+fp(h.qoq)+","+fp(h.yoy)+"
-";});
-  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));
-  a.download="EPS_"+row.sid+"_"+row.name+".csv";a.click();
+var row=MO.row,hist=MO.hist;if(!hist||!hist.length)return;
+var csv="\uFEFF\u5b63\u5ea6,EPS(\u5143),\u5b63\u589e\u7387,\u5e74\u589e\u7387\n";
+hist.slice().reverse().forEach(function(h){csv+=h.label+","+f2(h.eps)+","+fp(h.qoq)+","+fp(h.yoy)+"\n";});
+var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));
+a.download="EPS_"+row.sid+"_"+row.name+".csv";a.click();
 }
 function dlDetailXLS(){
-  var row=MO.row,hist=MO.hist;if(!hist||!hist.length)return;
-  var x='<?xml version="1.0" encoding="UTF-8"?>
-<?mso-application progid="Excel.Sheet"?>
-';
-  x+='<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
-';
-  x+='<Worksheet ss:Name="EPS歷史"><Table>
-';
-  [["季度","EPS(元)","季增率","年增率"]].concat(hist.slice().reverse().map(function(h){return[h.label,f2(h.eps),fp(h.qoq),fp(h.yoy)];})).forEach(function(r){
-    x+="<Row>";r.forEach(function(v){var s=String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");x+='<Cell><Data ss:Type="String">'+s+"</Data></Cell>";});x+="</Row>
-";
-  });
-  x+="</Table></Worksheet></Workbook>";
-  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([x],{type:"application/vnd.ms-excel;charset=utf-8;"}));
-  a.download="EPS_"+row.sid+"_"+row.name+".xls";a.click();
-}
-
-async function openDetail(row){
-  MO.row=row;MO.yr=4;MO.hist=[];
-  var moEl=document.getElementById("mo");
-  moEl.style.display="flex";document.body.style.overflow="hidden";
-  document.getElementById("mo-title").textContent=row.sid+" "+row.name+" (載入中...)";
-  document.getElementById("mo-body").innerHTML='<p style="color:#888;padding:20px 0">載入歷史 EPS 中...</p>';
-  var tabs=document.getElementById("mo-ytabs");tabs.innerHTML="";
-  [2,4,6].forEach(function(y){
-    var b=document.createElement("button");b.className="mo-tab"+(y===4?" on":"");b.textContent=y+"年";
-    b.onclick=function(){tabs.querySelectorAll(".mo-tab").forEach(function(t){t.classList.remove("on");});b.classList.add("on");MO.yr=y;renderMoBody();};
-    tabs.appendChild(b);
-  });
-  await fetchDetailHist(row);
-  document.getElementById("mo-title").textContent=row.sid+" "+row.name+" — EPS 歷史";
-  renderMoBody();
-}
-
-async function fetchDetailHist(row){
-  var startDate=(LATEST_YEAR-6)+"-01-01";
-  try{
-    var url=FEPS+row.sid+"&start_date="+startDate;
-    var res=await fetch(px(url)),d=await res.json();
-    var arr=d.status===200?(d.data||[]):[];
-    var qMap=parseEpsData(arr);
-    // Sort quarters
-    var keys=Object.keys(qMap).sort(function(a,b){
-      var [ay,aq]=a.split("_").map(Number);
-      var [by,bq]=b.split("_").map(Number);
-      return ay!==by?ay-by:aq-bq;
-    });
-    var hist=[];
-    keys.forEach(function(key){
-      var [yr,qn]=key.split("_").map(Number);
-      var cur=qMap[key];if(!cur||cur.eps==null)return;
-      var eps=cur.eps;
-      var pqY=qn>1?yr:yr-1, pqN=qn>1?qn-1:4;
-      var prevQ=qMap[pqY+"_"+pqN];
-      var qoq=(prevQ&&prevQ.eps!=null&&prevQ.eps!==0)?parseFloat(((eps-prevQ.eps)/Math.abs(prevQ.eps)*100).toFixed(2)):null;
-      var prevY=qMap[(yr-1)+"_"+qn];
-      var yoy=(prevY&&prevY.eps!=null&&prevY.eps!==0)?parseFloat(((eps-prevY.eps)/Math.abs(prevY.eps)*100).toFixed(2)):null;
-      hist.push({yr:yr,qn:qn,eps:eps,qoq:qoq,yoy:yoy,label:(yr-1911)+"Q"+qn});
-    });
-    MO.hist=hist;
-  }catch(e){MO.hist=[];}
-}
-
-function renderMoBody(){
-  var body=document.getElementById("mo-body"),yr=MO.yr,hist=MO.hist,row=MO.row;
-  if(!hist||!hist.length){body.innerHTML='<p style="color:#888;padding:20px 0">無歷史 EPS 資料（此股票可能未有季度財報或尚未公告）</p>';return;}
-  var cutYr=LATEST_YEAR-yr;
-  var filtered=hist.filter(function(h){return h.yr>cutYr;});
-  if(!filtered.length)filtered=hist.slice(-yr*4);
-  var lastH=hist[hist.length-1];
-  var html="";
-  html+='<div class="mo-info">';
-  var stats=[
-    {lb:"產業",vl:row.ind||"--",cls:"nu"},
-    {lb:"最新季度",vl:lastH.label,cls:"nu"},
-    {lb:"EPS(元)",vl:f2(lastH.eps),cls:cc(lastH.eps)},
-    {lb:"季增率",vl:fp(lastH.qoq),cls:cc(lastH.qoq)},
-    {lb:"年增率",vl:fp(lastH.yoy),cls:cc(lastH.yoy)},
-    {lb:"收盤價",vl:f2(row.close),cls:"nu"},
-    {lb:"漲跌",vl:row.chg!=null?(row.chg>0?"+":"")+f2(row.chg):"--",cls:cc(row.chg)},
-    {lb:"漲跌幅",vl:fp(row.pct),cls:cc(row.pct)}
-  ];
-  stats.forEach(function(s){html+='<div class="mo-stat"><span class="lb">'+s.lb+'</span><span class="vl '+s.cls+'">'+s.vl+'</span></div>';});
-  html+='</div>';
-  html+='<div style="display:flex;gap:8px;margin-bottom:12px"><button class="bt b2" onclick="dlDetailCSV()">&#8595; CSV</button><button class="bt b2" onclick="dlDetailXLS()">&#8595; XLS</button></div>';
-  html+='<div class="chart-legend"><span><span class="ld-dot" style="background:rgba(26,111,196,0.6)"></span>EPS(元)</span><span><span class="ld-dot" style="background:#e05252"></span>季增率</span><span><span class="ld-dot" style="background:#2a9d5c"></span>年增率</span></div>';
-  html+='<div style="width:100%;margin-bottom:8px"><canvas id="mo-chart" style="width:100%;height:220px;display:block"></canvas></div>';
-  html+='<div style="overflow-x:auto"><table class="mo-tbl"><thead><tr><th class="l">季度</th><th>EPS(元)</th><th>季增率</th><th>年增率</th></tr></thead><tbody>';
-  filtered.slice().reverse().forEach(function(h){
-    var qc=cc(h.qoq),yc=cc(h.yoy),ec=cc(h.eps);
-    html+='<tr><td class="l">'+h.label+'</td><td class="'+ec+'">'+f2(h.eps)+'</td><td class="'+qc+'">'+fp(h.qoq)+'</td><td class="'+yc+'">'+fp(h.yoy)+'</td></tr>';
-  });
-  html+='</tbody></table></div>';
-  body.innerHTML=html;
-  requestAnimationFrame(function(){drawEpsChart(filtered);});
-}
-
-function drawEpsChart(data){
-  var canvas=document.getElementById("mo-chart");if(!canvas)return;
-  var dpr=window.devicePixelRatio||1;
-  var W=canvas.parentElement.clientWidth||760,H=220;
-  canvas.width=W*dpr;canvas.height=H*dpr;
-  canvas.style.width=W+"px";canvas.style.height=H+"px";
-  var ctx=canvas.getContext("2d");ctx.scale(dpr,dpr);
-  var pad={l:58,r:58,t:14,b:36},cW=W-pad.l-pad.r,cH=H-pad.t-pad.b,n=data.length;
-  if(n<1)return;
-  var epss=data.map(function(d){return d.eps||0;});
-  var maxR=Math.max.apply(null,epss)||1,minR=Math.min.apply(null,epss);
-  var rPad=(maxR-minR)*0.12,rMax=maxR+rPad,rMin=minR-rPad,rRange=rMax-rMin||1;
-  var allP=[];data.forEach(function(d){if(d.qoq!=null)allP.push(d.qoq);if(d.yoy!=null)allP.push(d.yoy);});
-  var pA=allP.length?Math.max(Math.abs(Math.max.apply(null,allP)),Math.abs(Math.min.apply(null,allP))):50;
-  pA=Math.max(pA,10);var pMax=Math.ceil((pA*1.1)/10)*10,pMin=-pMax;
-  var bW=Math.max(2,cW/n*0.72);
-  function xP(i){return pad.l+(i+0.5)*(cW/n);}
-  function yR(v){return pad.t+cH-(v-rMin)/rRange*cH;}
-  function yP(v){return pad.t+(1-(v-pMin)/(pMax-pMin))*cH;}
-  ctx.fillStyle="#fafbfc";ctx.fillRect(pad.l,pad.t,cW,cH);
-  ctx.strokeStyle="#e8eaf0";ctx.lineWidth=1;
-  for(var gi=0;gi<=4;gi++){var gy=pad.t+gi/4*cH;ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(pad.l+cW,gy);ctx.stroke();}
-  var zy=yP(0);if(zy>=pad.t&&zy<=pad.t+cH){ctx.strokeStyle="#c0c4cc";ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,zy);ctx.lineTo(pad.l+cW,zy);ctx.stroke();ctx.setLineDash([]);}
-  for(var i=0;i<n;i++){
-    var bx=xP(i)-bW/2,ev=epss[i],byT,bH2;
-    var zeroY=yR(Math.max(rMin,0));
-    if(ev>=0){byT=yR(ev);bH2=zeroY-byT;ctx.fillStyle="rgba(26,111,196,0.6)";}
-    else{byT=zeroY;bH2=yR(ev)-zeroY;ctx.fillStyle="rgba(224,82,82,0.5)";}
-    if(bH2>0)ctx.fillRect(bx,byT,bW,bH2);
-  }
-  ctx.strokeStyle="#e05252";ctx.lineWidth=2;ctx.setLineDash([]);ctx.beginPath();var st=false;
-  for(var i=0;i<n;i++){if(data[i].qoq==null)continue;var lx=xP(i),ly=yP(data[i].qoq);if(!st){ctx.moveTo(lx,ly);st=true;}else ctx.lineTo(lx,ly);}ctx.stroke();
-  ctx.strokeStyle="#2a9d5c";ctx.lineWidth=2;ctx.beginPath();st=false;
-  for(var i=0;i<n;i++){if(data[i].yoy==null)continue;var lx=xP(i),ly=yP(data[i].yoy);if(!st){ctx.moveTo(lx,ly);st=true;}else ctx.lineTo(lx,ly);}ctx.stroke();
-  ctx.fillStyle="#888";ctx.font="11px 'Helvetica Neue',Arial,sans-serif";ctx.textAlign="center";
-  var step=Math.max(1,Math.ceil(n/8));
-  for(var i=0;i<n;i+=step){ctx.fillText(data[i].label,xP(i),pad.t+cH+14);}
-  ctx.fillStyle="#1a6fc4";ctx.textAlign="right";
-  for(var gi=0;gi<=4;gi++){var gv=rMin+gi/4*rRange,gy2=pad.t+cH-gi/4*cH;ctx.fillText(gv.toFixed(2),pad.l-6,gy2+4);}
-  ctx.fillStyle="#666";ctx.textAlign="left";
-  for(var gi=0;gi<=4;gi++){var gv2=pMin+gi/4*(pMax-pMin),gy3=pad.t+cH-gi/4*cH;ctx.fillText((gv2>0?"+":"")+gv2.toFixed(0)+"%",pad.l+cW+6,gy3+4);}
-  ctx.strokeStyle="#dde1e7";ctx.lineWidth=1;ctx.setLineDash([]);ctx.strokeRect(pad.l,pad.t,cW,cH);
+var row=MO.row,hist=MO.hist;if(!hist||!hist.length)return;
+var x='<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n';
+x+='<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+x+='<Worksheet ss:Name="EPS\u6b77\u53f2"><Table>\n';
+[["\u5b63\u5ea6","EPS(\u5143)","\u5b63\u589e\u7387","\u5e74\u589e\u7387"]].concat(hist.slice().reverse().map(function(h){return[h.label,f2(h.eps),fp(h.qoq),fp(h.yoy)];})).forEach(function(r){
+x+="<Row>";r.forEach(function(v){var s=String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");x+='<Cell><Data ss:Type="String">'+s+"</Data></Cell>";});x+="</Row>\n";
+});
+x+="</Table></Worksheet></Workbook>";
+var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([x],{type:"application/vnd.ms-excel;charset=utf-8;"}));
+a.download="EPS_"+row.sid+"_"+row.name+".xls";a.click();
 }
 
 document.addEventListener("DOMContentLoaded",function(){
