@@ -1,0 +1,3 @@
+# Cloudflare Pages config
+name = "fineps"
+pages_build_output_dir = "."
