@@ -92,7 +92,7 @@ tfoot td{background:#f0f2f7;font-weight:600;border-top:2px solid #dde1e7;font-si
 <div class="tw"><table><thead id="th"></thead><tbody id="tb"></tbody><tfoot id="tf"></tfoot></table></div>
 <div class="mo" id="mo" style="display:none" onclick="if(event.target===this)closeMo()"><div class="mo-box"><div class="mo-hdr"><div class="mo-title" id="mo-title"></div><button class="mo-close" onclick="closeMo()">&#10005;</button></div><div class="mo-ytabs" id="mo-ytabs"></div><div class="mo-body" id="mo-body"></div></div></div>
 <script>
-var PX=location.hostname.indexOf("pages.dev")>=0?"/api/proxy?url=":"https://corsproxy.io/?url=";
+var USE_LOCAL_PROXY=location.hostname.indexOf("pages.dev")>=0;var PROXY_LOCAL="/api/proxy?url=";var PROXY_EXT="https://corsproxy.io/?url=";
 var TPRC="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL";
 var FINFO="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockInfo";
 var FEPS="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockFinancialStatements&data_id=";
@@ -116,7 +116,7 @@ var COLS=[
 var BAD=["ETF","存託憑證","特別股","受益憑證","指數股票型","債券","基金"];
 var G={tab:"twse",rows:{twse:[],tpex:[],watch:[]},sk:"eps",sd:"desc",ind:"",wl:[],dm:"",fEps:"",fQoq:"",fYoy:"",fCumy:""};
 function initG(){try{G.wl=JSON.parse(localStorage.getItem("_tw_eps_w")||"[]");}catch(e){G.wl=[];}}
-function px(u){return PX+encodeURIComponent(u);}
+function px(u){return (USE_LOCAL_PROXY?PROXY_LOCAL:PROXY_EXT)+encodeURIComponent(u);}async function pfetch(u){if(!USE_LOCAL_PROXY)return fetch(PROXY_EXT+encodeURIComponent(u));try{var r=await fetch(PROXY_LOCAL+encodeURIComponent(u));if(r.ok||r.status===402)return r;throw new Error("proxy err "+r.status);}catch(e){return fetch(PROXY_EXT+encodeURIComponent(u));}}
 function ok4(c){return /^[1-9][0-9]{3,4}$/.test(c);}
 function okN(n){for(var i=0;i<BAD.length;i++){if(n.indexOf(BAD[i])>=0)return false;}return true;}
 function pf(v){if(v==null||v==="")return null;var n=parseFloat(String(v).replace(/,/g,""));return isNaN(n)?null:n;}
@@ -172,7 +172,7 @@ function calcMetrics(qMap,yr,qn){
 }
 async function loadTWSE(){
   spg(5,"取得上市股票清單與股價...");
-  var r2=await fetch(px(TPRC));
+  var r2=await pfetch(TPRC));
   var prcArr=await r2.json();
   spg(15,"取得上市 EPS 資料...");
   var pm={};
@@ -183,7 +183,7 @@ async function loadTWSE(){
     if(cl!=null&&ch!=null&&ch!==0){var pv=cl-ch;if(pv!==0)cp=parseFloat((ch/Math.abs(pv)*100).toFixed(2));}
     pm[p2.Code]={close:cl,chg:ch,pct:cp,name:p2.Name||"",ind:p2.IndustryCode||""};
   }
-  var infoRes=await fetch(px(FINFO));
+  var infoRes=await pfetch(FINFO));
   var infoData=await infoRes.json();
   if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
   var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="twse";});
@@ -197,7 +197,7 @@ async function loadTWSE(){
     var batch=stocks.slice(i,i+BATCH);
     var promises=batch.map(function(s){
       var url=FEPS+s.stock_id+"&start_date="+startDate;
-      return fetch(px(url)).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
+      return pfetch(url)).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
     });
     var batchR=await Promise.all(promises);
     for(var b=0;b<batchR.length;b++){
@@ -229,7 +229,7 @@ async function loadTWSE(){
 
 async function loadTPEx(){
   spg(5,"取得上櫃股票清單...");
-  var infoRes=await fetch(px(FINFO));
+  var infoRes=await pfetch(FINFO));
   var infoData=await infoRes.json();
   if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
   var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="tpex";});
@@ -243,7 +243,7 @@ async function loadTPEx(){
     var batch=stocks.slice(i,i+BATCH);
     var promises=batch.map(function(s){
       var url=FEPS+s.stock_id+"&start_date="+startDate;
-      return fetch(px(url)).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
+      return pfetch(url)).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
     });
     var batchR=await Promise.all(promises);
     for(var b=0;b<batchR.length;b++){
@@ -276,11 +276,11 @@ async function loadWatch(){
   var ids=G.wl;
   if(!ids.length){G.rows.watch=[];renderTable([]);cpg("自選股：尚未新增股票");return;}
   spg(5,"取得自選股 EPS 資料...");
-  var infoRes=await fetch(px(FINFO));
+  var infoRes=await pfetch(FINFO));
   var infoData=await infoRes.json();
   var infoMap={};
   (infoData.data||[]).forEach(function(s){if(ok4(s.stock_id))infoMap[s.stock_id]=s;});
-  var r2=await fetch(px(TPRC));
+  var r2=await pfetch(TPRC));
   var prcArr=await r2.json();
   var pm={};
   for(var i=0;i<prcArr.length;i++){
@@ -294,7 +294,7 @@ async function loadWatch(){
   var pArr=ids.map(function(id){
     var url=FEPS+id+"&start_date="+startDate;
     var si=infoMap[id];
-    return fetch(px(url)).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){
+    return pfetch(url)).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){
       var arr=d.status===200?(d.data||[]):[];
       var qMap=parseEpsData(arr);
       var m=calcMetrics(qMap,LATEST_YEAR,LATEST_QN);
