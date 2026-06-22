@@ -462,10 +462,8 @@ return{h:h,d:d};
 }
 function escCSV(v){var s=String(v==null?"":v);return(s.indexOf(",")>=0||s.indexOf('"')>=0)?'"'+s.replace(/"/g,'""')+'"':s;}
 function dlCSV(){
-var td=getTblData(),csv="\uFEFF"+td.h.join(",")+"
-";
-td.d.forEach(function(row){csv+=row.map(escCSV).join(",")+"
-";});
+var td=getTblData(),csv="\uFEFF"+td.h.join(",")+"\n";
+td.d.forEach(function(row){csv+=row.map(escCSV).join(",")+"\n";});
 var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));
 a.download="\u53f0\u80a1EPS_"+LATEST_Q+".csv";a.click();
 }
