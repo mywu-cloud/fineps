@@ -8,7 +8,8 @@ export async function onRequest(context) {
   // Only allow TWSE and FinMind
   const allowed = [
     'openapi.twse.com.tw',
-    'api.finmindtrade.com'
+    'api.finmindtrade.com',
+        'www.tpex.org.tw'
   ];
   const targetUrl = new URL(target);
   const ok = allowed.some(h => targetUrl.hostname === h);
