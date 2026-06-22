@@ -186,7 +186,7 @@ async function loadTWSE(){
   var infoRes=await pfetch(FINFO);
   var infoData=await infoRes.json();
   if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
-  var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="twse"&&(s.industry_category||"").indexOf("\u5275\u65b0\u677f")<0;});
+  var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="twse"&&(s.industry_category||"").indexOf("\u5275\u65b0")<0;});
   var seenIds={};
   stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
   spg(20,"載入上市 EPS 中，共 "+stocks.length+" 支...");
