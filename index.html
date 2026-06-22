@@ -113,7 +113,7 @@ var COLS=[
   {k:"cumeps",lb:"累季EPS(元)",al:"r"},
   {k:"cumy",lb:"累季年增率",al:"r"}
 ];
-var BAD=["ETF","存託憑證","特別股","受益憑證","指數股票型","債券","基金","創新版"];
+var BAD=["ETF","存託憑證","特別股","受益憑證","指數股票型","債券","基金","創新板"];
 var G={tab:"twse",rows:{twse:[],tpex:[],watch:[]},sk:"eps",sd:"desc",ind:"",wl:[],dm:"",fEps:"",fQoq:"",fYoy:"",fCumy:""};
 function initG(){try{G.wl=JSON.parse(localStorage.getItem("_tw_eps_w")||"[]");}catch(e){G.wl=[];}}
 function px(u){return (USE_LOCAL_PROXY?PROXY_LOCAL:PROXY_EXT)+encodeURIComponent(u);}async function pfetch(u){if(!USE_LOCAL_PROXY)return fetch(PROXY_EXT+encodeURIComponent(u));try{var r=await fetch(PROXY_LOCAL+encodeURIComponent(u));if(r.ok||r.status===402)return r;throw new Error("proxy err "+r.status);}catch(e){return fetch(PROXY_EXT+encodeURIComponent(u));}}
