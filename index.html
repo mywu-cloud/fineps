@@ -172,7 +172,7 @@ function calcMetrics(qMap,yr,qn){
 }
 async function loadTWSE(){
   spg(5,"取得上市股票清單與股價...");
-  var r2=await pfetch(TPRC));
+  var r2=await pfetch(TPRC);
   var prcArr=await r2.json();
   spg(15,"取得上市 EPS 資料...");
   var pm={};
@@ -183,21 +183,21 @@ async function loadTWSE(){
     if(cl!=null&&ch!=null&&ch!==0){var pv=cl-ch;if(pv!==0)cp=parseFloat((ch/Math.abs(pv)*100).toFixed(2));}
     pm[p2.Code]={close:cl,chg:ch,pct:cp,name:p2.Name||"",ind:p2.IndustryCode||""};
   }
-  var infoRes=await pfetch(FINFO));
+  var infoRes=await pfetch(FINFO);
   var infoData=await infoRes.json();
   if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
-  var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="twse"&&(s.industry_category||"").indexOf("\u5275\u65b0\u7248")<0;})});
+  var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="twse"&&(s.industry_category||"").indexOf("\u5275\u65b0\u7248")<0;});
   var seenIds={};
   stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
   spg(20,"載入上市 EPS 中，共 "+stocks.length+" 支...");
   var startDate=(LATEST_YEAR-3)+"-01-01";
-  var BATCH=PX.indexOf("proxy?url=")>=0?15:5;
+  var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
   var rows=[];
   for(var i=0;i<stocks.length;i+=BATCH){
     var batch=stocks.slice(i,i+BATCH);
     var promises=batch.map(function(s){
       var url=FEPS+s.stock_id+"&start_date="+startDate;
-      return pfetch(url)).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
+      return pfetch(url).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
     });
     var batchR=await Promise.all(promises);
     for(var b=0;b<batchR.length;b++){
@@ -229,7 +229,7 @@ async function loadTWSE(){
 
 async function loadTPEx(){
   spg(5,"取得上櫃股票清單...");
-  var infoRes=await pfetch(FINFO));
+  var infoRes=await pfetch(FINFO);
   var infoData=await infoRes.json();
   if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
   var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="tpex";});
@@ -237,13 +237,13 @@ async function loadTPEx(){
   stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
   spg(10,"取得 "+stocks.length+" 支上櫃股票，載入 EPS...");
   var startDate=(LATEST_YEAR-3)+"-01-01";
-  var BATCH=PX.indexOf("proxy?url=")>=0?15:5;
+  var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
   var rows=[];
   for(var i=0;i<stocks.length;i+=BATCH){
     var batch=stocks.slice(i,i+BATCH);
     var promises=batch.map(function(s){
       var url=FEPS+s.stock_id+"&start_date="+startDate;
-      return pfetch(url)).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
+      return pfetch(url).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
     });
     var batchR=await Promise.all(promises);
     for(var b=0;b<batchR.length;b++){
@@ -276,11 +276,11 @@ async function loadWatch(){
   var ids=G.wl;
   if(!ids.length){G.rows.watch=[];renderTable([]);cpg("自選股：尚未新增股票");return;}
   spg(5,"取得自選股 EPS 資料...");
-  var infoRes=await pfetch(FINFO));
+  var infoRes=await pfetch(FINFO);
   var infoData=await infoRes.json();
   var infoMap={};
   (infoData.data||[]).forEach(function(s){if(ok4(s.stock_id))infoMap[s.stock_id]=s;});
-  var r2=await pfetch(TPRC));
+  var r2=await pfetch(TPRC);
   var prcArr=await r2.json();
   var pm={};
   for(var i=0;i<prcArr.length;i++){
@@ -294,7 +294,7 @@ async function loadWatch(){
   var pArr=ids.map(function(id){
     var url=FEPS+id+"&start_date="+startDate;
     var si=infoMap[id];
-    return pfetch(url)).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){
+    return pfetch(url).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){
       var arr=d.status===200?(d.data||[]):[];
       var qMap=parseEpsData(arr);
       var m=calcMetrics(qMap,LATEST_YEAR,LATEST_QN);
@@ -489,6 +489,63 @@ a.download="\u53f0\u80a1EPS_"+LATEST_Q+".xls";a.click();
 
 var MO={row:null,yr:4,hist:[]};
 function closeMo(){document.getElementById("mo").style.display="none";document.body.style.overflow="";}
+
+async function openDetail(row){
+MO.row=row;MO.yr=4;MO.hist=[];
+document.getElementById("mo").style.display="flex";document.body.style.overflow="hidden";
+document.getElementById("mo-title").textContent=row.sid+" "+row.name;
+document.getElementById("mo-body").innerHTML='<div class="em">載入中...</div>';
+document.getElementById("mo-ytabs").innerHTML="";
+var startDate=(LATEST_YEAR-4)+"-01-01";
+var url=FEPS+row.sid+"&start_date="+startDate;
+try{
+var res=await pfetch(url);
+var d=await res.json();
+var arr=(d.status===200)?(d.data||[]):[];
+var qMap=parseEpsData(arr);
+// Build history: last 16 quarters
+var hist=[];
+for(var y=LATEST_YEAR;y>=LATEST_YEAR-3;y--){
+for(var qn=(y===LATEST_YEAR?LATEST_QN:4);qn>=1;qn--){
+var key=y+"_"+qn;
+var q=qMap[key];
+if(!q||q.eps==null)continue;
+var pqY=qn>1?y:y-1,pqN=qn>1?qn-1:4;
+var prevQ=qMap[pqY+"_"+pqN];
+var qoq=(prevQ&&prevQ.eps!=null&&prevQ.eps!==0)?parseFloat(((q.eps-prevQ.eps)/Math.abs(prevQ.eps)*100).toFixed(2)):null;
+var prevY=qMap[(y-1)+"_"+qn];
+var yoy=(prevY&&prevY.eps!=null&&prevY.eps!==0)?parseFloat(((q.eps-prevY.eps)/Math.abs(prevY.eps)*100).toFixed(2)):null;
+hist.push({label:qLabel(y,qn),eps:q.eps,qoq:qoq,yoy:yoy});
+}
+}
+MO.hist=hist;
+renderMoBody(row,hist);
+}catch(e){document.getElementById("mo-body").innerHTML='<div class="em er">載入失敗：'+e.message+'</div>';}
+}
+
+function renderMoBody(row,hist){
+var mo=document.getElementById("mo-body");
+var info='<div class="mo-info">';
+info+='<div class="mo-stat"><span class="lb">最新EPS</span><span class="vl '+cc(row.eps)+'">'+f2(row.eps)+'</span></div>';
+info+='<div class="mo-stat"><span class="lb">季增率</span><span class="vl '+cc(row.qoq)+'">'+fp(row.qoq)+'</span></div>';
+info+='<div class="mo-stat"><span class="lb">年增率</span><span class="vl '+cc(row.yoy)+'">'+fp(row.yoy)+'</span></div>';
+info+='<div class="mo-stat"><span class="lb">累季EPS</span><span class="vl">'+f2(row.cumeps)+'</span></div>';
+info+='<div class="mo-stat"><span class="lb">累季年增率</span><span class="vl '+cc(row.cumy)+'">'+fp(row.cumy)+'</span></div>';
+if(row.close!=null)info+='<div class="mo-stat"><span class="lb">收盤價</span><span class="vl">'+f2(row.close)+'</span></div>';
+info+='<div style="margin-left:auto;display:flex;gap:6px;align-items:center"><button class="bt b2" onclick="dlDetailCSV()">&#8595; CSV</button><button class="bt b2" onclick="dlDetailXLS()">&#8595; XLS</button></div>';
+info+='</div>';
+var tbl='<table class="mo-tbl"><thead><tr><th class="l">季度</th><th>EPS(元)</th><th>季增率</th><th>年增率</th></tr></thead><tbody>';
+for(var i=0;i<hist.length;i++){
+var h=hist[i];
+tbl+='<tr><td class="l"><span class="badge badge-q">'+h.label+'</span></td>';
+tbl+='<td class="'+cc(h.eps)+'">'+f2(h.eps)+'</td>';
+tbl+='<td class="'+cc(h.qoq)+'">'+fp(h.qoq)+'</td>';
+tbl+='<td class="'+cc(h.yoy)+'">'+fp(h.yoy)+'</td>';
+tbl+='</tr>';
+}
+tbl+='</tbody></table>';
+mo.innerHTML=info+tbl;
+}
 
 function dlDetailCSV(){
 var row=MO.row,hist=MO.hist;if(!hist||!hist.length)return;
