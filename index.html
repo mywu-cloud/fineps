@@ -178,7 +178,7 @@ var p2=prcArr[i];
 if(!ok4(p2.Code)||!okN(p2.Name||""))continue;
 var cl=pf(p2.ClosingPrice),ch=pf(p2.Change),cp=null;
 if(cl!=null&&ch!=null&&ch!==0){var pv=cl-ch;if(pv!==0)cp=parseFloat((ch/Math.abs(pv)*100).toFixed(2));}
-if(!G.priceDate&&p2.Date){G.priceDate=p2.Date.substring(4,6)+"/"+p2.Date.substring(6,8);}
+if(!G.priceDate&&p2.Date){G.priceDate=p2.Date.substring(3,5)+"/"+p2.Date.substring(5,7);}
 pm[p2.Code]={close:cl,chg:ch,pct:cp,name:p2.Name||"",ind:p2.IndustryCode||""};
 }
 var infoRes=await pfetch(FINFO);
