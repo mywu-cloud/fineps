@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ EPS ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ</title>
+<title>台股每股盈餘 EPS 排行</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:14px;background:#f5f6f8;color:#222;min-height:100vh}
@@ -84,17 +84,17 @@ tfoot td{background:#f0f2f7;font-weight:600;border-top:2px solid #dde1e7;font-si
 </style>
 </head>
 <body>
-<div class="hdr"><h1>&#128200; ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ EPS ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ</h1><div class="hdr-r" id="hdrR">--</div><div class="toast" id="toast"></div></div>
-<div class="tabs"><button class="tab on" id="tb-twse" onclick="switchTab('twse')">ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ (TWSE)</button><button class="tab" id="tb-tpex" onclick="switchTab('tpex')">ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂ (TPEx)</button><button class="tab" id="tb-watch" onclick="switchTab('watch')">&#11088; ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡</button></div>
-<div class="tb" id="toolM"><label style="font-size:14px;color:#555;font-weight:500">ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ</label><select id="indS" onchange="onInd()"><option value="">ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­</option></select><span class="sp"></span><button class="bt b2" onclick="dlCSV()">&#8595; CSV</button><button class="bt b2" onclick="dlXLS()">&#8595; XLS</button><button class="bt b1" onclick="reload()">&#128260; ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥</button></div>
-<div class="wt" id="toolW" style="display:none"><input id="wI" type="text" placeholder="ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ»ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ4ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ" maxlength="6" onkeydown="if(event.key==='Enter')addW()"><button class="bt b3" onclick="addW()">&#65291; ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ</button><span class="sp"></span><button class="bt b2" onclick="dlCSV()">&#8595; CSV</button><button class="bt b2" onclick="dlXLS()">&#8595; XLS</button><button class="bt b4 b5" onclick="clrW()">ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤</button></div>
-<div class="fr" id="toolF"><label>ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ»ÃÂÃÂÃÂÃÂ¶ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ</label><label>EPSÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥</label><input id="fEps" type="number" step="0.01" placeholder="ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" oninput="onFilt()"><label>ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</label><span class="frsep">|</span><label>ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥</label><input id="fQoq" type="number" step="0.01" placeholder="ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" oninput="onFilt()"><label>%</label><span class="frsep">|</span><label>ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥</label><input id="fYoy" type="number" step="0.01" placeholder="ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" oninput="onFilt()"><label>%</label><span class="frsep">|</span><label>ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥</label><input id="fCumy" type="number" step="0.01" placeholder="ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ" oninput="onFilt()"><label>%</label><span class="frsep">|</span><button class="bt b2" style="height:28px;font-size:12px;padding:2px 10px" onclick="clrFilt()">ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸</button></div>
+<div class="hdr"><h1>&#128200; 台股每股盈餘 EPS 排行</h1><div class="hdr-r" id="hdrR">--</div><div class="toast" id="toast"></div></div>
+<div class="tabs"><button class="tab on" id="tb-twse" onclick="switchTab('twse')">上市 (TWSE)</button><button class="tab" id="tb-tpex" onclick="switchTab('tpex')">上櫃 (TPEx)</button><button class="tab" id="tb-watch" onclick="switchTab('watch')">&#11088; 自選股</button></div>
+<div class="tb" id="toolM"><label style="font-size:14px;color:#555;font-weight:500">產業：</label><select id="indS" onchange="onInd()"><option value="">全部產業</option></select><span class="sp"></span><button class="bt b2" onclick="dlCSV()">&#8595; CSV</button><button class="bt b2" onclick="dlXLS()">&#8595; XLS</button><button class="bt b1" onclick="reload()">&#128260; 重新載入</button></div>
+<div class="wt" id="toolW" style="display:none"><input id="wI" type="text" placeholder="股票代號（4碼）" maxlength="6" onkeydown="if(event.key==='Enter')addW()"><button class="bt b3" onclick="addW()">&#65291; 新增</button><span class="sp"></span><button class="bt b2" onclick="dlCSV()">&#8595; CSV</button><button class="bt b2" onclick="dlXLS()">&#8595; XLS</button><button class="bt b4 b5" onclick="clrW()">全部清除</button></div>
+<div class="fr" id="toolF"><label>篩選條件：</label><label>EPS≥</label><input id="fEps" type="number" step="0.01" placeholder="不限" oninput="onFilt()"><label>元</label><span class="frsep">|</span><label>季增率≥</label><input id="fQoq" type="number" step="0.01" placeholder="不限" oninput="onFilt()"><label>%</label><span class="frsep">|</span><label>年增率≥</label><input id="fYoy" type="number" step="0.01" placeholder="不限" oninput="onFilt()"><label>%</label><span class="frsep">|</span><label>累季年增率≥</label><input id="fCumy" type="number" step="0.01" placeholder="不限" oninput="onFilt()"><label>%</label><span class="frsep">|</span><button class="bt b2" style="height:28px;font-size:12px;padding:2px 10px" onclick="clrFilt()">清除篩選</button></div>
 <div class="pg" id="pg"><div class="pgb" id="pgb"></div></div>
-<div class="st" id="st">ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ­...</div>
+<div class="st" id="st">初始化中...</div>
 <div class="tw"><table><thead id="th"></thead><tbody id="tb"></tbody><tfoot id="tf"></tfoot></table></div>
 <div class="mo" id="mo" style="display:none" onclick="if(event.target===this)closeMo()"><div class="mo-box"><div class="mo-hdr"><div class="mo-title" id="mo-title"></div><button class="mo-close" onclick="closeMo()">&#10005;</button></div><div class="mo-ytabs" id="mo-ytabs"></div><div class="mo-body" id="mo-body"></div></div></div>
 <script>
-var PROXY_CF="https://fineps.pages.dev/api/proxy?url=";var PROXY_EXT="https://corsproxy.io/?url=";
+var USE_LOCAL_PROXY=location.hostname.indexOf("pages.dev")>=0;var PROXY_LOCAL="/api/proxy?url=";var PROXY_EXT="https://corsproxy.io/?url=";
 var TPRC="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL";
 var TPEXC="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes";
 var FINFO="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockInfo";
@@ -104,22 +104,22 @@ var LATEST_YEAR=2026;
 var LATEST_QN=1;
 var COLS=[
 {k:"rank",lb:"#",al:"c"},
-{k:"sid",lb:"ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ»ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",al:"c"},
-{k:"name",lb:"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ±",al:"l"},
-{k:"ind",lb:"ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­",al:"l"},
-{k:"close",lb:"ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¶ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",al:"r",dynLb:true},
-{k:"chg",lb:"ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ",al:"r"},
-{k:"pct",lb:"ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ",al:"r"},
-{k:"eps",lb:"EPS(ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ) 26Q1",al:"r"},
-{k:"qoq",lb:"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",al:"r"},
-{k:"yoy",lb:"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",al:"r"},
-{k:"cumeps",lb:"ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£EPS(ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ)",al:"r"},
-{k:"cumy",lb:"ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",al:"r"}
+{k:"sid",lb:"代號",al:"c"},
+{k:"name",lb:"名稱",al:"l"},
+{k:"ind",lb:"產業",al:"l"},
+{k:"close",lb:"收盤價",al:"r",dynLb:true},
+{k:"chg",lb:"漲跌",al:"r"},
+{k:"pct",lb:"漲跌幅",al:"r"},
+{k:"eps",lb:"EPS(元) 26Q1",al:"r"},
+{k:"qoq",lb:"季增率",al:"r"},
+{k:"yoy",lb:"年增率",al:"r"},
+{k:"cumeps",lb:"累季EPS(元)",al:"r"},
+{k:"cumy",lb:"累季年增率",al:"r"}
 ];
-var BAD=["ETF","ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ","ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡","ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ","ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ","ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂµÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸","ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ","ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂµÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¿"];
-var G={tab:"twse",rows:{twse:[],tpex:[],watch:[]},sk:"eps",sd:"desc",ind:"",wl:[],dm:"",fEps:"",fQoq:"",fYoy:"",fCumy:"",priceDate:""};
+var BAD=["ETF","存託憑證","特別股","受益憑證","指數股票型","債券","基金","創新板"];
+var G={tab:"twse",rows:{twse:[],tpex:[],watch:[]},sk:"eps",sd:"desc",ind:"",wl:[],dm:"",fEps:"",fQoq:"",fYoy:"",fCumy:"",priceDate:null};
 function initG(){try{G.wl=JSON.parse(localStorage.getItem("_tw_eps_w")||"[]");}catch(e){G.wl=[];}}
-async function pfetch(u){if(u.indexOf('finmindtrade')>-1)return fetch(u).catch(function(){return fetch(PROXY_EXT+encodeURIComponent(u));});return fetch(PROXY_CF+encodeURIComponent(u)).then(function(r){if(r.ok||r.status===402)return r;return fetch(PROXY_EXT+encodeURIComponent(u));}).catch(function(e){return fetch(PROXY_EXT+encodeURIComponent(u));});}
+function px(u){return (USE_LOCAL_PROXY?PROXY_LOCAL:PROXY_EXT)+encodeURIComponent(u);}async function pfetch(u){if(!USE_LOCAL_PROXY)return fetch(PROXY_EXT+encodeURIComponent(u));try{var r=await fetch(PROXY_LOCAL+encodeURIComponent(u));if(r.ok||r.status===402)return r;throw new Error("proxy err "+r.status);}catch(e){return fetch(PROXY_EXT+encodeURIComponent(u));}}
 function ok4(c){return /^[1-9][0-9]{3,4}$/.test(c);}
 function okN(n){for(var i=0;i<BAD.length;i++){if(n.indexOf(BAD[i])>=0)return false;}return true;}
 function pf(v){if(v==null||v==="")return null;var n=parseFloat(String(v).replace(/,/g,""));return isNaN(n)?null:n;}
@@ -168,28 +168,28 @@ var cumy=(cumOk&&cumPYOk&&cumEpsPY!==0)?parseFloat(((cumEps-cumEpsPY)/Math.abs(c
 return{eps:eps,qoq:qoq,yoy:yoy,cumEps:cumOk?parseFloat(cumEps.toFixed(2)):null,cumy:cumy};
 }
 async function loadTWSE(){
-spg(5,"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ®ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹...");
+spg(5,"取得上市股票清單與股價...");
 var r2=await pfetch(TPRC);
 var prcArr=await r2.json();
-spg(15,"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ EPS ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ³ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ...");
+spg(15,"取得上市 EPS 資料...");
 var pm={};
 for(var i=0;i<prcArr.length;i++){
 var p2=prcArr[i];
 if(!ok4(p2.Code)||!okN(p2.Name||""))continue;
 var cl=pf(p2.ClosingPrice),ch=pf(p2.Change),cp=null;
 if(cl!=null&&ch!=null&&ch!==0){var pv=cl-ch;if(pv!==0)cp=parseFloat((ch/Math.abs(pv)*100).toFixed(2));}
+if(!G.priceDate&&p2.Date){G.priceDate=p2.Date.substring(4,6)+"/"+p2.Date.substring(6,8);}
 pm[p2.Code]={close:cl,chg:ch,pct:cp,name:p2.Name||"",ind:p2.IndustryCode||""};
 }
-if(prcArr.length>0&&prcArr[0].Date){var rd=prcArr[0].Date;G.priceDate=rd.substring(3,5)+"/"+rd.substring(5,7);}
 var infoRes=await pfetch(FINFO);
 var infoData=await infoRes.json();
-if(infoData.status===402){serr("FinMind API ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ±ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂ¦");return;}
+if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
 var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="twse"&&okN(s.industry_category||"")&&(s.industry_category||"").indexOf("\u5275\u65b0")<0;});
 var seenIds={};
 stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
-spg(20,"ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ EPS ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ± "+stocks.length+" ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯...");
+spg(20,"載入上市 EPS 中，共 "+stocks.length+" 支...");
 var startDate=(LATEST_YEAR-3)+"-01-01";
-var BATCH=15;
+var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
 var batch=stocks.slice(i,i+BATCH);
@@ -214,30 +214,30 @@ eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy
 }
 var done=i+batch.length;
 var pct=20+Math.round(done/stocks.length*70);
-spg(pct,"ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ EPS ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ­ "+done+"/"+stocks.length+"ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "+rows.length+" ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ");
+spg(pct,"上市 EPS 載入中 "+done+"/"+stocks.length+"，已有 "+rows.length+" 筆");
 if(rows.length&&done%100===0){G.rows.twse=rows.slice();if(G.tab==="twse"){populateInd("twse");renderTable(getRows());}}
 if(i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
 }
 G.rows.twse=rows;
 G.dm=LATEST_Q;
-document.getElementById("hdrR").textContent="ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ"+LATEST_Q;
+document.getElementById("hdrR").textContent="最新季度："+LATEST_Q;
 populateInd("twse");renderTable(getRows());
-cpg("ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ± "+rows.length+" ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ"+LATEST_Q);
+cpg("上市：共 "+rows.length+" 檔，最新季度："+LATEST_Q);
 }
 
 async function loadTPEx(){
-spg(5,"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ®ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹...");
+spg(5,"取得上櫃股票清單與股價...");
 var infoRes=await pfetch(FINFO);
 var infoData=await infoRes.json();
-if(infoData.status===402){serr("FinMind API ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ±ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂ¦");return;}
+if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
 var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="tpex";});
 var seenIds={};
 stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
-spg(8,"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ³ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ...");
-var pm={};
-spg(12,"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¾ÃÂÃÂÃÂÃÂ "+stocks.length+" ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ EPS...");
+spg(8,"取得上櫃股價資料...");
+
+spg(12,"取得 "+stocks.length+" 支上櫃股票，載入 EPS...");
 var startDate=(LATEST_YEAR-3)+"-01-01";
-var BATCH=15;
+var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
 var batch=stocks.slice(i,i+BATCH);
@@ -245,7 +245,7 @@ var priceStart=(new Date(new Date().setDate(new Date().getDate()-10))).toISOStri
 var promises=batch.map(function(s){
 var epsUrl=FEPS+s.stock_id+"&start_date="+startDate;
 var priceUrl="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id="+s.stock_id+"&start_date="+priceStart;
-return Promise.all([pfetch(epsUrl).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return d.status===200?(d.data||[]):[]}),pfetch(priceUrl).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return d.status===200?(d.data||[]):[]})]).then(function(res){return{s:s,arr:res[0],priceArr:res[1]};});
+return Promise.all([pfetch(epsUrl).then(function(r){return r&&r.status===200?r.json().then(function(d){return d.data||[]}):[]}).catch(function(){return[]}),pfetch(priceUrl).then(function(r){return r&&r.status===200?r.json().then(function(d){return d.data||[]}):[]}).catch(function(){return[]})]).then(function(res){return{s:s,arr:res[0],priceArr:res[1]}});
 });
 var batchR=await Promise.all(promises);
 for(var b=0;b<batchR.length;b++){
@@ -254,34 +254,32 @@ var qMap=parseEpsData(rs.arr);
 var m=calcMetrics(qMap,LATEST_YEAR,LATEST_QN);
 if(!m)continue;
 var priceRec=rs.priceArr&&rs.priceArr.length?rs.priceArr[rs.priceArr.length-1]:null;
-var rClose=priceRec?pf(priceRec.close):null;
-var rSpread=priceRec?pf(priceRec.spread):null;
-var rPct=(rClose!=null&&rSpread!=null&&rSpread!==0&&(rClose-rSpread)!==0)?parseFloat((rSpread/(rClose-rSpread)*100).toFixed(2)):null;
+var pr={close:priceRec?pf(priceRec.close):null,chg:priceRec?pf(priceRec.spread):null,pct:priceRec&&priceRec.close&&priceRec.spread!=null?parseFloat((priceRec.spread/(priceRec.close-priceRec.spread)*100).toFixed(2)):null};
 if(priceRec&&priceRec.date&&!G.priceDate){var pd=priceRec.date;G.priceDate=pd.slice(5,7)+"/"+pd.slice(8,10);}
 rows.push({
 sid:rs.s.stock_id,
 name:rs.s.stock_name||rs.s.stock_id,
 ind:rs.s.industry_category||"",
-close:rClose,chg:rSpread,pct:rPct,
+close:pr.close||null,chg:pr.chg||null,pct:pr.pct||null,
 eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy
 });
 }
 var done=i+batch.length;
 var pct=12+Math.round(done/stocks.length*68);
-spg(pct,"ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂ EPS ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ­ "+done+"/"+stocks.length+"ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "+rows.length+" ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ");
+spg(pct,"上櫃 EPS 載入中 "+done+"/"+stocks.length+"，已有 "+rows.length+" 筆");
 if(rows.length&&done%150===0){G.rows.tpex=rows.slice();if(G.tab==="tpex"){populateInd("tpex");renderTable(getRows());}}
 if(i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
 }
 G.rows.tpex=rows;
 G.dm=LATEST_Q;
-document.getElementById("hdrR").textContent="ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ"+LATEST_Q;
+document.getElementById("hdrR").textContent="最新季度："+LATEST_Q;
 populateInd("tpex");renderTable(getRows());
-cpg("ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ± "+rows.length+" ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ"+LATEST_Q);
+cpg("上櫃：共 "+rows.length+" 檔，最新季度："+LATEST_Q);
 }
 async function loadWatch(){
 var ids=G.wl;
-if(!ids.length){G.rows.watch=[];renderTable([]);cpg("ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¨");return;}
-spg(5,"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¾ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ EPS ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ³ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ...");
+if(!ids.length){G.rows.watch=[];renderTable([]);cpg("自選股：尚未新增股票");return;}
+spg(5,"取得自選股 EPS 資料...");
 var infoRes=await pfetch(FINFO);
 var infoData=await infoRes.json();
 var infoMap={};
@@ -312,12 +310,12 @@ return{sid:id,name:si?si.stock_name:id,ind:si?si.industry_category:"",close:pr.c
 var rows=await Promise.all(pArr);
 G.rows.watch=rows;
 renderTable(getRows());
-cpg("ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ"+rows.length+" ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ"+LATEST_Q);
+cpg("自選股："+rows.length+" 支，最新季度："+LATEST_Q);
 }
 function saveW(){localStorage.setItem("_tw_eps_w",JSON.stringify(G.wl));}
-function addW(){var inp=document.getElementById("wI"),code=inp.value.trim().toUpperCase();inp.value="";if(!code)return;if(!ok4(code)){alert("ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ«ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥4~5ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ»ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ");return;}if(G.wl.indexOf(code)>=0){alert(code+" ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡");return;}G.wl.push(code);saveW();if(G.tab==="watch")loadWatch();}
+function addW(){var inp=document.getElementById("wI"),code=inp.value.trim().toUpperCase();inp.value="";if(!code)return;if(!ok4(code)){alert("請輸入4~5碼數字股票代號");return;}if(G.wl.indexOf(code)>=0){alert(code+" 已在自選股");return;}G.wl.push(code);saveW();if(G.tab==="watch")loadWatch();}
 function rmW(code){G.wl=G.wl.filter(function(id){return id!==code;});saveW();if(G.tab==="watch")loadWatch();}
-function clrW(){if(!confirm("ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ®ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ"))return;G.wl=[];saveW();G.rows.watch=[];renderTable([]);cpg("ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂº");}
+function clrW(){if(!confirm("確定清除全部自選股？"))return;G.wl=[];saveW();G.rows.watch=[];renderTable([]);cpg("自選股已清空");}
 
 function getRows(){
 var rows=(G.rows[G.tab]||[]).slice();
@@ -354,7 +352,7 @@ function populateInd(tab){
 var sel=document.getElementById("indS"),rows=G.rows[tab]||[],seen={},inds=[];
 for(var i=0;i<rows.length;i++){var ind=rows[i].ind;if(ind&&!seen[ind]){seen[ind]=1;inds.push(ind);}}
 inds.sort(function(a,b){return a.localeCompare(b,"zh-TW");});
-sel.innerHTML='<option value="">ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­</option>';
+sel.innerHTML='<option value="">全部產業</option>';
 for(var j=0;j<inds.length;j++){var o=document.createElement("option");o.value=inds[j];o.textContent=inds[j];if(inds[j]===G.ind)o.selected=true;sel.appendChild(o);}
 }
 
@@ -370,7 +368,7 @@ th.setAttribute("data-k",col.k);
 th.onclick=(function(k){return function(){doSort(k);};})(col.k);
 if(G.sk===col.k)th.className+=(th.className?" ":"")+(G.sd==="asc"?"sa":"sd");
 var ico=G.sk===col.k?(G.sd==="asc"?"&#9650;":"&#9660;"):"&#8661;";
-th.innerHTML=(col.dynLb&&G.priceDate?G.priceDate+" "+col.lb:col.lb)+'<span class="si">'+ico+'</span>';
+th.innerHTML=(col.dynLb&&G.priceDate?G.priceDate+" ":"")+col.lb+'<span class="si">'+ico+'</span>';
 tr.appendChild(th);
 }
 document.getElementById("th").innerHTML="";
@@ -379,7 +377,7 @@ document.getElementById("th").appendChild(tr);
 
 function renderBody(rows){
 var tbody=document.getElementById("tb");
-if(!rows.length){tbody.innerHTML='<tr><td colspan="'+COLS.length+'" class="em">ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ³ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ EPS ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂªÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¶ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂº API ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ</td></tr>';return;}
+if(!rows.length){tbody.innerHTML='<tr><td colspan="'+COLS.length+'" class="em">無資料（本季 EPS 尚未公告，或超出 API 配額）</td></tr>';return;}
 var frag=document.createDocumentFragment();
 for(var i=0;i<rows.length;i++){
 var row=rows[i],tr=document.createElement("tr");
@@ -402,7 +400,7 @@ else if(k==="cumy"){
 td.className=cc(row.cumy);
 var v=fp(row.cumy);
 if(G.tab==="watch"){
-var btn=document.createElement("button");btn.className="bt b4 b5";btn.style.marginLeft="6px";btn.textContent="ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ";
+var btn=document.createElement("button");btn.className="bt b4 b5";btn.style.marginLeft="6px";btn.textContent="✕";
 (function(id){btn.onclick=function(e){e.stopPropagation();rmW(id);};})(row.sid);
 var sp2=document.createElement("span");sp2.textContent=v;td.appendChild(sp2);td.appendChild(btn);
 }else{td.textContent=v;}
@@ -428,10 +426,10 @@ var tr=document.createElement("tr");
 for(var j=0;j<COLS.length;j++){
 var col=COLS[j],td=document.createElement("td");
 td.className=col.al==="l"?"l":"";
-if(j===1)td.textContent="ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ/ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ³ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ";
-else if(col.k==="eps")td.textContent=avgEps!=null?f2(avgEps)+" ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ":"-";
+if(j===1)td.textContent="合計/平均";
+else if(col.k==="eps")td.textContent=avgEps!=null?f2(avgEps)+" 均":"-";
 else if(col.k==="cumeps")td.textContent="";
-else if(col.k==="yoy"){td.textContent=avgYoy!=null?fp(avgYoy)+" ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ":"-";td.className=cc(avgYoy);}
+else if(col.k==="yoy"){td.textContent=avgYoy!=null?fp(avgYoy)+" 均":"-";td.className=cc(avgYoy);}
 else if(col.k==="qoq"){td.innerHTML='<span class="up">&#9650;'+up+'</span> <span class="dn">&#9660;'+dn+'</span>';}
 else td.textContent="";
 }
@@ -453,7 +451,7 @@ document.getElementById("indS").value="";
 if(G.rows[tab]&&G.rows[tab].length>0){if(!isW)populateInd(tab);renderTable(getRows());}
 else{loadData();}
 }
-async function loadData(){try{if(G.tab==="twse")await loadTWSE();else if(G.tab==="tpex")await loadTPEx();else await loadWatch();}catch(e){serr("ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ±ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ"+e.message);console.error(e);}}
+async function loadData(){try{if(G.tab==="twse")await loadTWSE();else if(G.tab==="tpex")await loadTPEx();else await loadWatch();}catch(e){serr("載入失敗："+e.message);console.error(e);}}
 function reload(){G.rows[G.tab]=[];loadData();}
 function getTblData(){
 var rows=getRows();
@@ -498,7 +496,7 @@ function closeMo(){document.getElementById("mo").style.display="none";document.b
 
 // NEW: SVG bar chart for EPS history
 function renderEpsChart(hist){
-if(!hist||!hist.length)return'<div class="em" style="padding:20px">ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ³ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</div>';
+if(!hist||!hist.length)return'<div class="em" style="padding:20px">無歷史資料</div>';
 // Show up to 12 most recent quarters (hist is newest-first)
 var data=hist.slice(0,12).reverse(); // now oldest-first for chart
 var W=760,H=160,PL=36,PR=10,PT=10,PB=32;
@@ -558,7 +556,7 @@ async function openDetail(row){
 MO.row=row;MO.yr=4;MO.hist=[];
 document.getElementById("mo").style.display="flex";document.body.style.overflow="hidden";
 document.getElementById("mo-title").innerHTML=row.sid+' <span style="color:#555;font-weight:500">'+row.name+'</span>'+(row.ind?'<span style="font-size:13px;color:#888;margin-left:8px">'+row.ind+'</span>':'');
-document.getElementById("mo-body").innerHTML='<div class="em">ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² EPS ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ­...</div>';
+document.getElementById("mo-body").innerHTML='<div class="em">載入歷史 EPS 中...</div>';
 document.getElementById("mo-ytabs").innerHTML="";
 var startDate=(LATEST_YEAR-4)+"-01-01";
 var url=FEPS+row.sid+"&start_date="+startDate;
@@ -583,10 +581,10 @@ hist.push({label:qLabel(y,qn),yr:y,qn:qn,eps:q.eps,qoq:qoq,yoy:yoy});
 }
 MO.hist=hist;
 MO.qMap=qMap;
-// Build year tabs: show last 3 years + "ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
+// Build year tabs: show last 3 years + "全部"
 var ytabs=document.getElementById("mo-ytabs");
 ytabs.innerHTML="";
-var tabDefs=[{lb:"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",yr:0},{lb:LATEST_YEAR+"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´",yr:LATEST_YEAR},{lb:(LATEST_YEAR-1)+"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´",yr:LATEST_YEAR-1},{lb:(LATEST_YEAR-2)+"ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´",yr:LATEST_YEAR-2}];
+var tabDefs=[{lb:"全部",yr:0},{lb:LATEST_YEAR+"年",yr:LATEST_YEAR},{lb:(LATEST_YEAR-1)+"年",yr:LATEST_YEAR-1},{lb:(LATEST_YEAR-2)+"年",yr:LATEST_YEAR-2}];
 tabDefs.forEach(function(t){
 var btn=document.createElement("button");
 btn.className="mo-tab"+(MO.yr===0&&t.yr===0?" on":MO.yr===4&&t.yr===0?" on":"");
@@ -594,11 +592,11 @@ btn.textContent=t.lb;
 (function(yt){btn.onclick=function(){MO.yr=yt;document.querySelectorAll(".mo-tab").forEach(function(b){b.classList.remove("on");});btn.classList.add("on");renderMoBody(row,getHistForYr(hist,yt));};} )(t.yr);
 ytabs.appendChild(btn);
 });
-// Default to "ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ©ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨" tab on
+// Default to "全部" tab on
 ytabs.children[0].classList.add("on");
 MO.yr=0;
 renderMoBody(row,hist);
-}catch(e){document.getElementById("mo-body").innerHTML='<div class="em er">ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ±ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ'+e.message+'</div>';}
+}catch(e){document.getElementById("mo-body").innerHTML='<div class="em er">載入失敗：'+e.message+'</div>';}
 }
 
 function getHistForYr(hist,yr){
@@ -619,26 +617,26 @@ if(ok)annEps=parseFloat(s.toFixed(2));
 }
 var peFwd=(row.close!=null&&annEps!=null&&annEps!==0)?parseFloat((row.close/annEps).toFixed(1)):null;
 var info='<div class="mo-info">';
-info+='<div class="mo-stat"><span class="lb">ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°EPS</span><span class="vl '+cc(row.eps)+'">'+f2(row.eps)+'</span></div>';
-info+='<div class="mo-stat"><span class="lb">ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</span><span class="vl '+cc(row.qoq)+'">'+fp(row.qoq)+'</span></div>';
-info+='<div class="mo-stat"><span class="lb">ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</span><span class="vl '+cc(row.yoy)+'">'+fp(row.yoy)+'</span></div>';
-info+='<div class="mo-stat"><span class="lb">ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£EPS</span><span class="vl">'+f2(row.cumeps)+'</span></div>';
-info+='<div class="mo-stat"><span class="lb">ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</span><span class="vl '+cc(row.cumy)+'">'+fp(row.cumy)+'</span></div>';
-if(row.close!=null)info+='<div class="mo-stat"><span class="lb">ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¶ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¤ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹</span><span class="vl">'+f2(row.close)+'</span></div>';
-if(pe!=null)info+='<div class="mo-stat"><span class="lb">ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬ÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ(P/E)</span><span class="vl '+(pe>30?"up":pe<15?"dn":"nu")+'">'+pe+'x</span></div>';
-if(peFwd!=null)info+='<div class="mo-stat"><span class="lb">ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ¿ÃÂÃÂÃÂÃÂ4ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£P/E</span><span class="vl '+(peFwd>30?"up":peFwd<15?"dn":"nu")+'">'+peFwd+'x</span></div>';
+info+='<div class="mo-stat"><span class="lb">最新EPS</span><span class="vl '+cc(row.eps)+'">'+f2(row.eps)+'</span></div>';
+info+='<div class="mo-stat"><span class="lb">季增率</span><span class="vl '+cc(row.qoq)+'">'+fp(row.qoq)+'</span></div>';
+info+='<div class="mo-stat"><span class="lb">年增率</span><span class="vl '+cc(row.yoy)+'">'+fp(row.yoy)+'</span></div>';
+info+='<div class="mo-stat"><span class="lb">累季EPS</span><span class="vl">'+f2(row.cumeps)+'</span></div>';
+info+='<div class="mo-stat"><span class="lb">累季年增率</span><span class="vl '+cc(row.cumy)+'">'+fp(row.cumy)+'</span></div>';
+if(row.close!=null)info+='<div class="mo-stat"><span class="lb">收盤價</span><span class="vl">'+f2(row.close)+'</span></div>';
+if(pe!=null)info+='<div class="mo-stat"><span class="lb">本益比(P/E)</span><span class="vl '+(pe>30?"up":pe<15?"dn":"nu")+'">'+pe+'x</span></div>';
+if(peFwd!=null)info+='<div class="mo-stat"><span class="lb">近4季P/E</span><span class="vl '+(peFwd>30?"up":peFwd<15?"dn":"nu")+'">'+peFwd+'x</span></div>';
 info+='<div style="margin-left:auto;display:flex;gap:6px;align-items:center"><button class="bt b2" onclick="dlDetailCSV()">&#8595; CSV</button><button class="bt b2" onclick="dlDetailXLS()">&#8595; XLS</button></div>';
 info+='</div>';
 // Chart
 var chartHtml='';
 if(hist&&hist.length>0){
 chartHtml='<div class="chart-wrap">';
-chartHtml+='<div class="chart-title">&#128200; EPS ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂµÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¼ÃÂÃÂÃÂÃÂ</div>';
+chartHtml+='<div class="chart-title">&#128200; EPS 季度走勢（元）</div>';
 chartHtml+=renderEpsChart(hist);
-chartHtml+='<div class="chart-legend"><span><span class="ld-dot" style="background:#1a6fc4"></span>ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£EPS</span><span><span class="ld-dot" style="background:#e05252"></span>ÃÂÃÂÃÂÃÂ¨ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ EPS</span></div>';
+chartHtml+='<div class="chart-legend"><span><span class="ld-dot" style="background:#1a6fc4"></span>正EPS</span><span><span class="ld-dot" style="background:#e05252"></span>負EPS</span></div>';
 chartHtml+='</div>';
 }
-var tbl='<table class="mo-tbl"><thead><tr><th class="l">ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂºÃÂÃÂÃÂÃÂ¦</th><th>EPS(ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ)</th><th>ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</th><th>ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¹ÃÂÃÂÃÂÃÂ´ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ§ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</th></tr></thead><tbody>';
+var tbl='<table class="mo-tbl"><thead><tr><th class="l">季度</th><th>EPS(元)</th><th>季增率</th><th>年增率</th></tr></thead><tbody>';
 for(var i=0;i<hist.length;i++){
 var h=hist[i];
 tbl+='<tr><td class="l"><span class="badge badge-q">'+h.label+'</span></td>';
