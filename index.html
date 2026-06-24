@@ -672,6 +672,21 @@ a.download="EPS_"+row.sid+"_"+row.name+".xls";a.click();
 document.addEventListener("DOMContentLoaded",function(){
 initG();renderHead();loadData();
 document.addEventListener("keydown",function(e){if(e.key==="Escape")closeMo();});
+
+function scheduleRefresh(){
+var now=new Date();
+var tw=new Date(now.getTime()+8*3600000);
+var h=tw.getUTCHours(),m=tw.getUTCMinutes(),s=tw.getUTCSeconds();
+var targets=[19,20];
+var msUntilNext=null;
+for(var i=0;i<targets.length;i++){
+var diff=(targets[i]-h)*3600000-m*60000-s*1000;
+if(diff>0&&(msUntilNext===null||diff<msUntilNext))msUntilNext=diff;
+}
+if(msUntilNext===null)msUntilNext=(43-h)*3600000-m*60000-s*1000;
+setTimeout(function(){loadData();scheduleRefresh();},msUntilNext);
+}
+scheduleRefresh();
 });
 </script>
 </body>
