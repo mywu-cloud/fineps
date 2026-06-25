@@ -1,0 +1,27 @@
+name: Auto Update Stock Prices
+
+on:
+  schedule:
+    # Taiwan time 19:00 = UTC 11:00
+    - cron: '0 11 * * 1-5'
+    # Taiwan time 20:00 = UTC 12:00
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Cloudflare Pages redeploy
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "$(TZ='Asia/Taipei' date '+%Y-%m-%d %H:%M:%S %Z')" > last-price-update.txt
+          git add last-price-update.txt
+          git commit -m "chore: auto update stock prices at $(TZ='Asia/Taipei' date '+%Y-%m-%d %H:%M %Z')"
+          git push
