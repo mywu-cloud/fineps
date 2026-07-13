@@ -85,7 +85,7 @@ tfoot td{background:#f0f2f7;font-weight:600;border-top:2px solid #dde1e7;font-si
 </head>
 <body>
 <div class="hdr"><h1>&#128200; 台股每股盈餘 EPS 排行</h1><div class="hdr-r" id="hdrR">--</div><div class="toast" id="toast"></div></div>
-<div class="tabs"><button class="tab on" id="tb-twse" onclick="switchTab('twse')">上市 (TWSE)</button><button class="tab" id="tb-tpex" onclick="switchTab('tpex')">上櫃 (TPEx)</button><button class="tab" id="tb-watch" onclick="switchTab('watch')">&#11088; 自選股</button></div>
+<div class="tabs"><button class="tab on" id="tb-twse" onclick="switchTab('twse')">上市 (TWSE)</button><button class="tab" id="tb-tpex" onclick="switchTab('tpex')">上櫃 (TPEx)</button><button class="tab" id="tb-watch" onclick="switchTab('watch')">&#11088; 自選股</button><button class="tab" id="tb-twseE" onclick="switchTab('twseE')">上市每股盈餘搶先報</button><button class="tab" id="tb-tpexE" onclick="switchTab('tpexE')">上櫃每股盈餘搶先報</button></div>
 <div class="tb" id="toolM"><label style="font-size:14px;color:#555;font-weight:500">產業：</label><select id="indS" onchange="onInd()"><option value="">全部產業</option></select><span class="sp"></span><button class="bt b2" onclick="dlCSV()">&#8595; CSV</button><button class="bt b2" onclick="dlXLS()">&#8595; XLS</button><button class="bt b1" onclick="reload()">&#128260; 重新載入</button></div>
 <div class="wt" id="toolW" style="display:none"><input id="wI" type="text" placeholder="股票代號（4碼）" maxlength="6" onkeydown="if(event.key==='Enter')addW()"><button class="bt b3" onclick="addW()">&#65291; 新增</button><span class="sp"></span><button class="bt b2" onclick="dlCSV()">&#8595; CSV</button><button class="bt b2" onclick="dlXLS()">&#8595; XLS</button><button class="bt b4 b5" onclick="clrW()">全部清除</button></div>
 <div class="fr" id="toolF"><label>篩選條件：</label><label>EPS≥</label><input id="fEps" type="number" step="0.01" placeholder="不限" oninput="onFilt()"><label>元</label><span class="frsep">|</span><label>季增率≥</label><input id="fQoq" type="number" step="0.01" placeholder="不限" oninput="onFilt()"><label>%</label><span class="frsep">|</span><label>年增率≥</label><input id="fYoy" type="number" step="0.01" placeholder="不限" oninput="onFilt()"><label>%</label><span class="frsep">|</span><label>累季年增率≥</label><input id="fCumy" type="number" step="0.01" placeholder="不限" oninput="onFilt()"><label>%</label><span class="frsep">|</span><button class="bt b2" style="height:28px;font-size:12px;padding:2px 10px" onclick="clrFilt()">清除篩選</button></div>
@@ -102,6 +102,9 @@ var FEPS="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockFinancialS
 var LATEST_Q="26Q1";
 var LATEST_YEAR=2026;
 var LATEST_QN=1;
+var EARLY_QN=LATEST_QN+1,EARLY_YEAR=LATEST_YEAR;
+if(EARLY_QN>4){EARLY_QN=1;EARLY_YEAR=LATEST_YEAR+1;}
+var EARLY_Q=(EARLY_YEAR%100)+"Q"+EARLY_QN;
 var COLS=[
 {k:"rank",lb:"#",al:"c"},
 {k:"sid",lb:"代號",al:"c"},
@@ -116,8 +119,14 @@ var COLS=[
 {k:"cumeps",lb:"累季EPS(元)",al:"r"},
 {k:"cumy",lb:"累季年增率",al:"r"}
 ];
+function getCols(){
+if(G.tab==="twseE"||G.tab==="tpexE"){
+return COLS.map(function(c){if(c.k==="eps")return{k:c.k,lb:"EPS(元) "+EARLY_Q,al:c.al,dynLb:c.dynLb};return c;});
+}
+return COLS;
+}
 var BAD=["ETF","存託憑證","特別股","受益憑證","指數股票型","債券","基金","創新板"];
-var G={tab:"twse",rows:{twse:[],tpex:[],watch:[]},sk:"eps",sd:"desc",ind:"",wl:[],dm:"",fEps:"",fQoq:"",fYoy:"",fCumy:"",priceDate:null};
+var G={tab:"twse",rows:{twse:[],tpex:[],watch:[],twseE:[],tpexE:[]},sk:"eps",sd:"desc",ind:"",wl:[],dm:"",fEps:"",fQoq:"",fYoy:"",fCumy:"",priceDate:null};
 function initG(){try{G.wl=JSON.parse(localStorage.getItem("_tw_eps_w")||"[]");}catch(e){G.wl=[];}}
 function px(u){return (USE_LOCAL_PROXY?PROXY_LOCAL:PROXY_EXT)+encodeURIComponent(u);}async function pfetch(u){if(!USE_LOCAL_PROXY)return fetch(PROXY_EXT+encodeURIComponent(u));try{var r=await fetch(PROXY_LOCAL+encodeURIComponent(u));if(r.ok||r.status===402)return r;throw new Error("proxy err "+r.status);}catch(e){return fetch(PROXY_EXT+encodeURIComponent(u));}}
 function ok4(c){return /^[1-9][0-9]{3,4}$/.test(c);}
@@ -276,6 +285,112 @@ document.getElementById("hdrR").textContent="最新季度："+LATEST_Q;
 populateInd("tpex");renderTable(getRows());
 cpg("上櫃：共 "+rows.length+" 檔，最新季度："+LATEST_Q);
 }
+async function loadTWSEEarly(){
+spg(5,"取得上市股票清單與股價...");
+var r2=await pfetch(TPRC);
+var prcArr=await r2.json();
+spg(15,"取得上市 "+EARLY_Q+" EPS 搶先報資料...");
+var pm={};
+for(var i=0;i<prcArr.length;i++){
+var p2=prcArr[i];
+if(!ok4(p2.Code)||!okN(p2.Name||""))continue;
+var cl=pf(p2.ClosingPrice),ch=pf(p2.Change),cp=null;
+if(cl!=null&&ch!=null&&ch!==0){var pv=cl-ch;if(pv!==0)cp=parseFloat((ch/Math.abs(pv)*100).toFixed(2));}
+if(!G.priceDate&&p2.Date){G.priceDate=p2.Date.substring(3,5)+"/"+p2.Date.substring(5,7);}
+pm[p2.Code]={close:cl,chg:ch,pct:cp,name:p2.Name||"",ind:p2.IndustryCode||""};
+}
+var infoRes=await pfetch(FINFO);
+var infoData=await infoRes.json();
+if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
+var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="twse"&&okN(s.industry_category||"")&&(s.industry_category||"").indexOf("\u5275\u65b0")<0;});
+var seenIds={};
+stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
+spg(20,"掃描上市 "+EARLY_Q+" 搶先公布中，共 "+stocks.length+" 支...");
+var startDate=(EARLY_YEAR-3)+"-01-01";
+var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
+var rows=[];
+for(var i=0;i<stocks.length;i+=BATCH){
+var batch=stocks.slice(i,i+BATCH);
+var promises=batch.map(function(s){
+var url=FEPS+s.stock_id+"&start_date="+startDate;
+return pfetch(url).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
+});
+var batchR=await Promise.all(promises);
+for(var b=0;b<batchR.length;b++){
+var rs=batchR[b];
+var qMap=parseEpsData(rs.arr);
+var m=calcMetrics(qMap,EARLY_YEAR,EARLY_QN);
+if(!m)continue;
+var pr=pm[rs.s.stock_id]||{};
+rows.push({
+sid:rs.s.stock_id,
+name:rs.s.stock_name||pr.name||rs.s.stock_id,
+ind:rs.s.industry_category||"",
+close:pr.close||null,chg:pr.chg||null,pct:pr.pct||null,
+eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy
+});
+}
+var done=i+batch.length;
+var pct=20+Math.round(done/stocks.length*70);
+spg(pct,"上市 "+EARLY_Q+" 搶先報掃描中 "+done+"/"+stocks.length+"，已公布 "+rows.length+" 筆");
+if(rows.length&&done%100===0){G.rows.twseE=rows.slice();if(G.tab==="twseE"){populateInd("twseE");renderTable(getRows());}}
+if(i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
+}
+G.rows.twseE=rows;
+if(G.tab==="twseE")document.getElementById("hdrR").textContent="搶先報 "+EARLY_Q+"｜已公布 "+rows.length+" 檔";
+populateInd("twseE");renderTable(getRows());
+cpg("上市搶先報：已公布 "+rows.length+" 檔（"+EARLY_Q+"），持續更新中");
+}
+
+async function loadTPExEarly(){
+spg(5,"取得上櫃股票清單...");
+var infoRes=await pfetch(FINFO);
+var infoData=await infoRes.json();
+if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
+var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="tpex";});
+var seenIds={};
+stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
+spg(12,"掃描上櫃 "+EARLY_Q+" 搶先公布中，共 "+stocks.length+" 支...");
+var startDate=(EARLY_YEAR-3)+"-01-01";
+var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
+var rows=[];
+for(var i=0;i<stocks.length;i+=BATCH){
+var batch=stocks.slice(i,i+BATCH);
+var priceStart=(new Date(new Date().setDate(new Date().getDate()-10))).toISOString().slice(0,10);
+var promises=batch.map(function(s){
+var epsUrl=FEPS+s.stock_id+"&start_date="+startDate;
+var priceUrl="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id="+s.stock_id+"&start_date="+priceStart;
+return Promise.all([pfetch(epsUrl).then(function(r){return r&&r.status===200?r.json().then(function(d){return d.data||[]}):[]}).catch(function(){return[]}),pfetch(priceUrl).then(function(r){return r&&r.status===200?r.json().then(function(d){return d.data||[]}):[]}).catch(function(){return[]})]).then(function(res){return{s:s,arr:res[0],priceArr:res[1]}});
+});
+var batchR=await Promise.all(promises);
+for(var b=0;b<batchR.length;b++){
+var rs=batchR[b];
+var qMap=parseEpsData(rs.arr);
+var m=calcMetrics(qMap,EARLY_YEAR,EARLY_QN);
+if(!m)continue;
+var priceRec=rs.priceArr&&rs.priceArr.length?rs.priceArr[rs.priceArr.length-1]:null;
+var pr={close:priceRec?pf(priceRec.close):null,chg:priceRec?pf(priceRec.spread):null,pct:priceRec&&priceRec.close&&priceRec.spread!=null?parseFloat((priceRec.spread/(priceRec.close-priceRec.spread)*100).toFixed(2)):null};
+if(priceRec&&priceRec.date&&!G.priceDate){var pd=priceRec.date;G.priceDate=pd.slice(5,7)+"/"+pd.slice(8,10);}
+rows.push({
+sid:rs.s.stock_id,
+name:rs.s.stock_name||rs.s.stock_id,
+ind:rs.s.industry_category||"",
+close:pr.close||null,chg:pr.chg||null,pct:pr.pct||null,
+eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy
+});
+}
+var done=i+batch.length;
+var pct=12+Math.round(done/stocks.length*68);
+spg(pct,"上櫃 "+EARLY_Q+" 搶先報掃描中 "+done+"/"+stocks.length+"，已公布 "+rows.length+" 筆");
+if(rows.length&&done%150===0){G.rows.tpexE=rows.slice();if(G.tab==="tpexE"){populateInd("tpexE");renderTable(getRows());}}
+if(i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
+}
+G.rows.tpexE=rows;
+if(G.tab==="tpexE")document.getElementById("hdrR").textContent="搶先報 "+EARLY_Q+"｜已公布 "+rows.length+" 檔";
+populateInd("tpexE");renderTable(getRows());
+cpg("上櫃搶先報：已公布 "+rows.length+" 檔（"+EARLY_Q+"），持續更新中");
+}
+
 async function loadWatch(){
 var ids=G.wl;
 if(!ids.length){G.rows.watch=[];renderTable([]);cpg("自選股：尚未新增股票");return;}
@@ -360,9 +475,10 @@ function onFilt(){G.fEps=document.getElementById("fEps").value.trim();G.fQoq=doc
 function clrFilt(){G.fEps="";G.fQoq="";G.fYoy="";G.fCumy="";["fEps","fQoq","fYoy","fCumy"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});renderTable(getRows());}
 
 function renderHead(){
+var cols=getCols();
 var tr=document.createElement("tr");
-for(var i=0;i<COLS.length;i++){
-var col=COLS[i],th=document.createElement("th");
+for(var i=0;i<cols.length;i++){
+var col=cols[i],th=document.createElement("th");
 th.className=col.al==="l"?"l":"";
 th.setAttribute("data-k",col.k);
 th.onclick=(function(k){return function(){doSort(k);};})(col.k);
@@ -376,13 +492,14 @@ document.getElementById("th").appendChild(tr);
 }
 
 function renderBody(rows){
+var cols=getCols();
 var tbody=document.getElementById("tb");
-if(!rows.length){tbody.innerHTML='<tr><td colspan="'+COLS.length+'" class="em">無資料（本季 EPS 尚未公告，或超出 API 配額）</td></tr>';return;}
+if(!rows.length){tbody.innerHTML='<tr><td colspan="'+cols.length+'" class="em">無資料（本季 EPS 尚未公告，或超出 API 配額）</td></tr>';return;}
 var frag=document.createDocumentFragment();
 for(var i=0;i<rows.length;i++){
 var row=rows[i],tr=document.createElement("tr");
-for(var j=0;j<COLS.length;j++){
-var col=COLS[j],td=document.createElement("td");
+for(var j=0;j<cols.length;j++){
+var col=cols[j],td=document.createElement("td");
 td.className=col.al==="l"?"l":"";
 var k=col.k;
 if(k==="rank"){td.innerHTML='<span class="rn">'+(i+1)+'</span>';}
@@ -422,9 +539,10 @@ if(rows[i].yoy!=null){yoys.push(rows[i].yoy);if(rows[i].yoy>0)up++;else if(rows[
 }
 var avgYoy=yoys.length?yoys.reduce(function(a,b){return a+b;},0)/yoys.length:null;
 var avgEps=cnt?totEps/cnt:null;
+var cols=getCols();
 var tr=document.createElement("tr");
-for(var j=0;j<COLS.length;j++){
-var col=COLS[j],td=document.createElement("td");
+for(var j=0;j<cols.length;j++){
+var col=cols[j],td=document.createElement("td");
 td.className=col.al==="l"?"l":"";
 if(j===1)td.textContent="合計/平均";
 else if(col.k==="eps")td.textContent=avgEps!=null?f2(avgEps)+" 均":"-";
@@ -442,20 +560,22 @@ function onInd(){G.ind=document.getElementById("indS").value;renderTable(getRows
 function switchTab(tab){
 G.tab=tab;G.ind="";G.fEps="";G.fQoq="";G.fYoy="";G.fCumy="";
 ["fEps","fQoq","fYoy","fCumy"].forEach(function(id){var el=document.getElementById(id);if(el)el.value="";});
-["twse","tpex","watch"].forEach(function(t){document.getElementById("tb-"+t).className="tab"+(t===tab?" on":"");});
+["twse","tpex","watch","twseE","tpexE"].forEach(function(t){document.getElementById("tb-"+t).className="tab"+(t===tab?" on":"");});
 var isW=tab==="watch";
 document.getElementById("toolM").style.display=isW?"none":"flex";
 document.getElementById("toolW").style.display=isW?"flex":"none";
 document.getElementById("toolF").style.display=isW?"none":"flex";
 document.getElementById("indS").value="";
+if(tab==="twseE"||tab==="tpexE"){document.getElementById("hdrR").textContent="搶先報 "+EARLY_Q+(G.rows[tab]&&G.rows[tab].length?"｜已公布 "+G.rows[tab].length+" 檔":"");}else{document.getElementById("hdrR").textContent="最新季度："+LATEST_Q;}
 if(G.rows[tab]&&G.rows[tab].length>0){if(!isW)populateInd(tab);renderTable(getRows());}
 else{loadData();}
 }
-async function loadData(){try{if(G.tab==="twse")await loadTWSE();else if(G.tab==="tpex")await loadTPEx();else await loadWatch();}catch(e){serr("載入失敗："+e.message);console.error(e);}}
+async function loadData(){try{if(G.tab==="twse")await loadTWSE();else if(G.tab==="tpex")await loadTPEx();else if(G.tab==="twseE")await loadTWSEEarly();else if(G.tab==="tpexE")await loadTPExEarly();else await loadWatch();}catch(e){serr("載入失敗："+e.message);console.error(e);}}
 function reload(){G.rows[G.tab]=[];loadData();}
 function getTblData(){
 var rows=getRows();
-var h=COLS.map(function(c){return c.lb;});
+var cols=getCols();
+var h=cols.map(function(c){return c.lb;});
 var d=rows.map(function(r,i){return[
 i+1,r.sid,r.name||"",r.ind||"",
 r.close!=null?parseFloat(r.close).toFixed(2):"",
