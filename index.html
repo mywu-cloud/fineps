@@ -594,7 +594,7 @@ function dlCSV(){
 var td=getTblData(),csv="\uFEFF"+td.h.join(",")+"\n";
 td.d.forEach(function(row){csv+=row.map(escCSV).join(",")+"\n";});
 var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));
-a.download="\u53f0\u80a1EPS_"+LATEST_Q+".csv";a.click();
+a.download="\u53f0\u80a1EPS_"+((G.tab==="twseE"||G.tab==="tpexE")?EARLY_Q:LATEST_Q)+".csv";a.click();
 }
 function dlXLS(){
 var td=getTblData();
@@ -608,7 +608,7 @@ x+="</Row>\n";
 });
 x+="</Table></Worksheet></Workbook>";
 var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([x],{type:"application/vnd.ms-excel;charset=utf-8;"}));
-a.download="\u53f0\u80a1EPS_"+LATEST_Q+".xls";a.click();
+a.download="\u53f0\u80a1EPS_"+((G.tab==="twseE"||G.tab==="tpexE")?EARLY_Q:LATEST_Q)+".xls";a.click();
 }
 
 var MO={row:null,yr:4,hist:[]};
