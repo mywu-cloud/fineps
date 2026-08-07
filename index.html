@@ -221,7 +221,7 @@ var seenIds={};
 stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
 spg(20,"載入上市 EPS 中，共 "+stocks.length+" 支...");
 var startDate=(LATEST_YEAR-3)+"-01-01";
-var BATCH=USE_LOCAL_PROXY?15:5;
+var BATCH=15;
 var epsCacheJson=await loadEpsCache("twse");
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
@@ -272,7 +272,7 @@ spg(8,"取得上櫃股價資料...");
 
 spg(12,"取得 "+stocks.length+" 支上櫃股票，載入 EPS...");
 var startDate=(LATEST_YEAR-3)+"-01-01";
-var BATCH=USE_LOCAL_PROXY?15:5;
+var BATCH=15;
 var epsCacheJson=await loadEpsCache("tpex");
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
@@ -338,7 +338,7 @@ var seenIds={};
 stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
 spg(20,"掃描上市 "+EARLY_Q+" 搶先公布中，共 "+stocks.length+" 支...");
 var startDate=(EARLY_YEAR-3)+"-01-01";
-var BATCH=USE_LOCAL_PROXY?15:5;
+var BATCH=15;
 var epsCacheJson=await loadEpsCache("twse");
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
@@ -386,7 +386,7 @@ var seenIds={};
 stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
 spg(12,"掃描上櫃 "+EARLY_Q+" 搶先公布中，共 "+stocks.length+" 支...");
 var startDate=(EARLY_YEAR-3)+"-01-01";
-var BATCH=USE_LOCAL_PROXY?15:5;
+var BATCH=15;
 var epsCacheJson=await loadEpsCache("tpex");
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
