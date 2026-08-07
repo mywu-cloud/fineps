@@ -221,11 +221,11 @@ var seenIds={};
 stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
 spg(20,"載入上市 EPS 中，共 "+stocks.length+" 支...");
 var startDate=(LATEST_YEAR-3)+"-01-01";
-var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
+var BATCH=USE_LOCAL_PROXY?15:5;
 var epsCacheJson=await loadEpsCache("twse");
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
-var batch=stocks.slice(i,i+BATCH);
+var batch=stocks.slice(i,i+BATCH);var allCached=batch.every(function(s){var cq=cacheQMap(epsCacheJson,s.stock_id);return cq&&hasQ(cq,LATEST_YEAR,LATEST_QN);});
 var promises=batch.map(function(s){
 var cq=cacheQMap(epsCacheJson,s.stock_id);
 if(cq&&hasQ(cq,LATEST_YEAR,LATEST_QN)){return Promise.resolve({s:s,qMapCached:cq});}
@@ -251,7 +251,7 @@ var done=i+batch.length;
 var pct=20+Math.round(done/stocks.length*70);
 spg(pct,"上市 EPS 載入中 "+done+"/"+stocks.length+"，已有 "+rows.length+" 筆");
 if(rows.length&&done%100===0){G.rows.twse=rows.slice();if(G.tab==="twse"){populateInd("twse");renderTable(getRows());}}
-if(i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
+if(!allCached&&i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
 }
 G.rows.twse=rows;
 G.dm=LATEST_Q;
@@ -272,7 +272,7 @@ spg(8,"取得上櫃股價資料...");
 
 spg(12,"取得 "+stocks.length+" 支上櫃股票，載入 EPS...");
 var startDate=(LATEST_YEAR-3)+"-01-01";
-var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
+var BATCH=USE_LOCAL_PROXY?15:5;
 var epsCacheJson=await loadEpsCache("tpex");
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
@@ -338,11 +338,11 @@ var seenIds={};
 stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
 spg(20,"掃描上市 "+EARLY_Q+" 搶先公布中，共 "+stocks.length+" 支...");
 var startDate=(EARLY_YEAR-3)+"-01-01";
-var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
+var BATCH=USE_LOCAL_PROXY?15:5;
 var epsCacheJson=await loadEpsCache("twse");
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
-var batch=stocks.slice(i,i+BATCH);
+var batch=stocks.slice(i,i+BATCH);var allCached=batch.every(function(s){var cq=cacheQMap(epsCacheJson,s.stock_id);return cq&&hasQ(cq,EARLY_YEAR,EARLY_QN);});
 var promises=batch.map(function(s){
 var cq=cacheQMap(epsCacheJson,s.stock_id);
 if(cq&&hasQ(cq,EARLY_YEAR,EARLY_QN)){return Promise.resolve({s:s,qMapCached:cq});}
@@ -368,7 +368,7 @@ var done=i+batch.length;
 var pct=20+Math.round(done/stocks.length*70);
 spg(pct,"上市 "+EARLY_Q+" 搶先報掃描中 "+done+"/"+stocks.length+"，已公布 "+rows.length+" 筆");
 if(rows.length&&done%100===0){G.rows.twseE=rows.slice();if(G.tab==="twseE"){populateInd("twseE");renderTable(getRows());}}
-if(i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
+if(!allCached&&i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
 }
 G.rows.twseE=rows;
 if(G.tab==="twseE")document.getElementById("hdrR").textContent="搶先報 "+EARLY_Q+"｜已公布 "+rows.length+" 檔";
@@ -386,7 +386,7 @@ var seenIds={};
 stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
 spg(12,"掃描上櫃 "+EARLY_Q+" 搶先公布中，共 "+stocks.length+" 支...");
 var startDate=(EARLY_YEAR-3)+"-01-01";
-var BATCH=PROXY_LOCAL.indexOf("proxy?url=")>=0?15:5;
+var BATCH=USE_LOCAL_PROXY?15:5;
 var epsCacheJson=await loadEpsCache("tpex");
 var rows=[];
 for(var i=0;i<stocks.length;i+=BATCH){
