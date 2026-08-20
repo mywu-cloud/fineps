@@ -17,6 +17,7 @@ export async function onRequest(context) {
   }
   const allowed = [
     'openapi.twse.com.tw',
+    'www.twse.com.tw',
     'api.finmindtrade.com',
     'www.tpex.org.tw',
     'mis.twse.com.tw',
