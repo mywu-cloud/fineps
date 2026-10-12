@@ -8,22 +8,37 @@ on:
     - cron: '0 12 * * 1-5'
   workflow_dispatch:
 
+concurrency:
+  group: data-commit
+  cancel-in-progress: false
+
 jobs:
-  trigger-deploy:
+  update-prices:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
-          contents: write
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Trigger Cloudflare Pages redeploy
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Snapshot closing prices (TWSE + TPEx bulk)
+        run: node scripts/fetch-prices.js
+
+      - name: Commit (also triggers Cloudflare Pages redeploy)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           echo "$(TZ='Asia/Taipei' date '+%Y-%m-%d %H:%M:%S %Z')" > last-price-update.txt
-          git add last-price-update.txt
+          git add last-price-update.txt data/prices.json
           git commit -m "chore: auto update stock prices at $(TZ='Asia/Taipei' date '+%Y-%m-%d %H:%M %Z')"
-          git push
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push && exit 0
+            sleep 5
+          done
+          exit 1

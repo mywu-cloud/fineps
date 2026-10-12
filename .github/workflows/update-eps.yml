@@ -1,13 +1,26 @@
 name: Update EPS Cache
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      max_finmind:
+        description: 'FinMind 查詢上限（本次執行）'
+        required: false
+        default: '400'
   schedule:
-    - cron: '0 10,13 * * 1-5'
+    # 平日台灣時間 08:17、15:17–22:17 每小時。
+    # 官方批次端點（TWSE/TPEx OpenAPI）每次只需數個請求，可以高頻執行；
+    # FinMind 只補「暫估值」與缺漏股票，且每檔 20 小時內不重複查詢。
+    - cron: '17 0,7-14 * * 1-5'
+
+concurrency:
+  group: data-commit
+  cancel-in-progress: false
 
 jobs:
   fetch-eps:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
     steps:
@@ -19,9 +32,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Fetch EPS data from FinMind
+      - name: Fetch EPS (TWSE/TPEx bulk + FinMind top-up)
         env:
           FINMIND_TOKEN: ${{ secrets.FINMIND_TOKEN }}
+          MAX_FINMIND: ${{ github.event.inputs.max_finmind || '400' }}
         run: node scripts/fetch-eps.js
 
       - name: Commit updated data
@@ -31,7 +45,11 @@ jobs:
           git add data/eps-twse.json data/eps-tpex.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
-          else
-            git commit -m "chore: update EPS cache $(TZ='Asia/Taipei' date '+%Y-%m-%d %H:%M %Z')"
-            git push
+            exit 0
           fi
+          git commit -m "chore: update EPS cache $(TZ='Asia/Taipei' date '+%Y-%m-%d %H:%M %Z')"
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push && exit 0
+            sleep 5
+          done
+          exit 1
