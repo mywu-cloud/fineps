@@ -81,6 +81,7 @@ tfoot td{background:#f0f2f7;font-weight:600;border-top:2px solid #dde1e7;font-si
 .mo-tbl tr:hover td{background:#f7f9fd}
 .badge{display:inline-block;font-size:12px;padding:1px 6px;border-radius:3px;font-weight:600;margin-left:4px}
 .badge-q{background:#e8f0fd;color:#1a6fc4}
+.est{color:#e08a00;font-weight:700;margin-left:1px;cursor:help}
 </style>
 </head>
 <body>
@@ -99,18 +100,10 @@ var TPRC="https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL";
 var TPEXC="https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes";
 var FINFO="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockInfo";
 var FEPS="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockFinancialStatements&data_id=";
-var LATEST_Q="26Q1";
-var LATEST_YEAR=2026;
-var LATEST_QN=1;
-var EARLY_QN=LATEST_QN+1,EARLY_YEAR=LATEST_YEAR;
-if(EARLY_QN>4){EARLY_QN=1;EARLY_YEAR=LATEST_YEAR+1;}
-var EARLY_Q=(EARLY_YEAR%100)+"Q"+EARLY_QN;
+// Quarters are detected from the cached data at load time (see detectQuarters).
+var LATEST_Q="--",LATEST_YEAR=0,LATEST_QN=0;
+var EARLY_Q="--",EARLY_YEAR=0,EARLY_QN=0;
 var EPS_CACHE={};
-function loadEpsCache(type){
-if(EPS_CACHE[type])return EPS_CACHE[type];
-EPS_CACHE[type]=fetch("data/eps-"+type+".json").then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
-return EPS_CACHE[type];
-}
 function cacheQMap(cacheJson,stockId){
 if(!cacheJson||!cacheJson.stocks)return null;
 var c=cacheJson.stocks[stockId];
@@ -136,20 +129,18 @@ var COLS=[
 {k:"close",lb:"收盤價",al:"r",dynLb:true},
 {k:"chg",lb:"漲跌",al:"r"},
 {k:"pct",lb:"漲跌幅",al:"r"},
-{k:"eps",lb:"EPS(元) 26Q1",al:"r"},
+{k:"eps",lb:"EPS(元)",al:"r"},
 {k:"qoq",lb:"季增率",al:"r"},
 {k:"yoy",lb:"年增率",al:"r"},
 {k:"cumeps",lb:"累季EPS(元)",al:"r"},
 {k:"cumy",lb:"累季年增率",al:"r"}
 ];
 function getCols(){
-if(G.tab==="twseE"||G.tab==="tpexE"){
-return COLS.map(function(c){if(c.k==="eps")return{k:c.k,lb:"EPS(元) "+EARLY_Q,al:c.al,dynLb:c.dynLb};return c;});
-}
-return COLS;
+var ql=(G.tab==="twseE"||G.tab==="tpexE")?EARLY_Q:LATEST_Q;
+return COLS.map(function(c){if(c.k==="eps")return{k:c.k,lb:"EPS(元) "+ql,al:c.al,dynLb:c.dynLb};return c;});
 }
 var BAD=["ETF","存託憑證","特別股","受益憑證","指數股票型","債券","基金","創新板"];
-var G={tab:"twse",rows:{twse:[],tpex:[],watch:[],twseE:[],tpexE:[]},sk:"eps",sd:"desc",ind:"",con:"",conMap:{},concepts:[],wl:[],dm:"",fEps:"",fQoq:"",fYoy:"",fCumy:"",priceDate:null};
+var G={tab:"twse",rows:{twse:[],tpex:[],watch:[],twseE:[],tpexE:[]},sk:"eps",sd:"desc",ind:"",con:"",conMap:{},concepts:[],wl:[],dm:"",fEps:"",fQoq:"",fYoy:"",fCumy:"",px:{twse:{},tpex:{}},pxDate:{twse:"",tpex:""},epsUpdatedAt:"",msg:{}};
 function initG(){try{G.wl=JSON.parse(localStorage.getItem("_tw_eps_w")||"[]");}catch(e){G.wl=[];}}
 function px(u){return (USE_LOCAL_PROXY?PROXY_LOCAL:PROXY_EXT)+encodeURIComponent(u);}async function pfetch(u){if(!USE_LOCAL_PROXY)return fetch(PROXY_EXT+encodeURIComponent(u));try{var r=await fetch(PROXY_LOCAL+encodeURIComponent(u));if(r.ok||r.status===402)return r;throw new Error("proxy err "+r.status);}catch(e){return fetch(PROXY_EXT+encodeURIComponent(u));}}
 function ok4(c){return /^[1-9][0-9]{3,4}$/.test(c);}
@@ -199,272 +190,165 @@ if(pq&&pq.eps!=null)cumEpsPY+=pq.eps; else cumPYOk=false;
 var cumy=(cumOk&&cumPYOk&&cumEpsPY!==0)?parseFloat(((cumEps-cumEpsPY)/Math.abs(cumEpsPY)*100).toFixed(2)):null;
 return{eps:eps,qoq:qoq,yoy:yoy,cumEps:cumOk?parseFloat(cumEps.toFixed(2)):null,cumy:cumy};
 }
-async function loadTWSE(){
-spg(5,"取得上市股票清單與股價...");
-var r2=await pfetch(TPRC);
-var prcArr=await r2.json();
-spg(15,"取得上市 EPS 資料...");
-var pm={};
-for(var i=0;i<prcArr.length;i++){
-var p2=prcArr[i];
-if(!ok4(p2.Code)||!okN(p2.Name||""))continue;
-var cl=pf(p2.ClosingPrice),ch=pf(p2.Change),cp=null;
-if(cl!=null&&ch!=null&&ch!==0){var pv=cl-ch;if(pv!==0)cp=parseFloat((ch/Math.abs(pv)*100).toFixed(2));}
-if(!G.priceDate&&p2.Date){G.priceDate=p2.Date.substring(3,5)+"/"+p2.Date.substring(5,7);}
-pm[p2.Code]={close:cl,chg:ch,pct:cp,name:p2.Name||"",ind:p2.IndustryCode||""};
+// ---- Data loading: cache-first ------------------------------------------
+// All tables are built from the JSON snapshots that GitHub Actions maintains
+// (data/eps-*.json, data/prices.json). No per-stock FinMind requests are made
+// while browsing; FinMind is only queried for a watch-list code or a detail
+// modal whose stock is not in the cache.
+var BASE=null;
+function hourTag(){return Math.floor(Date.now()/3600000);}
+function loadEpsCache(type){
+if(EPS_CACHE[type])return EPS_CACHE[type];
+EPS_CACHE[type]=fetch("data/eps-"+type+".json?d="+hourTag()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+return EPS_CACHE[type];
 }
-var infoRes=await pfetch(FINFO);
-var infoData=await infoRes.json();
-if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
-var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="twse"&&okN(s.industry_category||"")&&(s.industry_category||"").indexOf("\u5275\u65b0")<0;});
-var seenIds={};
-stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
-spg(20,"載入上市 EPS 中，共 "+stocks.length+" 支...");
-var startDate=(LATEST_YEAR-3)+"-01-01";
-var BATCH=15;
-var epsCacheJson=await loadEpsCache("twse");
-var rows=[];
-for(var i=0;i<stocks.length;i+=BATCH){
-var batch=stocks.slice(i,i+BATCH);var allCached=batch.every(function(s){var cq=cacheQMap(epsCacheJson,s.stock_id);return cq&&hasQ(cq,LATEST_YEAR,LATEST_QN);});
-var promises=batch.map(function(s){
-var cq=cacheQMap(epsCacheJson,s.stock_id);
-if(cq&&hasQ(cq,LATEST_YEAR,LATEST_QN)){return Promise.resolve({s:s,qMapCached:cq});}
-var url=FEPS+s.stock_id+"&start_date="+startDate;
-return pfetch(url).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
+function loadPricesJson(){
+return fetch("data/prices.json?d="+hourTag()).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;});
+}
+function qNum(k){var p=k.split("_");return parseInt(p[0],10)*10+parseInt(p[1],10);}
+// Main quarter = newest quarter reported by at least half of the market
+// (same rule as scripts/fetch-eps.js). The early (搶先報) quarter is the next one.
+function detectQuarters(caches){
+var cov={},total=0;
+caches.forEach(function(c){
+if(!c||!c.stocks)return;
+for(var id in c.stocks){total++;var qs=c.stocks[id].quarters||{};for(var k in qs){if(qs[k]!=null)cov[k]=(cov[k]||0)+1;}}
 });
-var batchR=await Promise.all(promises);
-for(var b=0;b<batchR.length;b++){
-var rs=batchR[b];
-var qMap=rs.qMapCached||parseEpsData(rs.arr);
-var m=calcMetrics(qMap,LATEST_YEAR,LATEST_QN);
-if(!m)continue;
-var pr=pm[rs.s.stock_id]||{};
-rows.push({
-sid:rs.s.stock_id,
-name:rs.s.stock_name||pr.name||rs.s.stock_id,
-ind:rs.s.industry_category||"",
-close:pr.close||null,chg:pr.chg||null,pct:pr.pct||null,
-eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy
+var best=null;
+Object.keys(cov).forEach(function(k){if(cov[k]>=total*0.5&&(!best||qNum(k)>qNum(best)))best=k;});
+if(!best){var tw=new Date(Date.now()+8*3600000),y=tw.getUTCFullYear(),q=Math.floor(tw.getUTCMonth()/3);if(q<1){q=4;y--;}best=y+"_"+q;}
+var p=best.split("_");
+LATEST_YEAR=parseInt(p[0],10);LATEST_QN=parseInt(p[1],10);LATEST_Q=qLabel(LATEST_YEAR,LATEST_QN);
+EARLY_QN=LATEST_QN+1;EARLY_YEAR=LATEST_YEAR;if(EARLY_QN>4){EARLY_QN=1;EARLY_YEAR++;}
+EARLY_Q=qLabel(EARLY_YEAR,EARLY_QN);
+}
+function ensureBase(){
+if(BASE)return BASE;
+spg(20,"讀取 EPS 與股價快取...");
+BASE=Promise.all([loadEpsCache("twse"),loadEpsCache("tpex"),loadPricesJson()]).then(function(res){
+if(!res[0]&&!res[1])throw new Error("無法讀取 EPS 快取（data/eps-*.json）");
+detectQuarters([res[0],res[1]]);
+var pj=res[2]||{};
+["twse","tpex"].forEach(function(mk){if(pj[mk]&&pj[mk].p)applyPrices(mk,pj[mk].p,pj[mk].date||"");});
+G.epsUpdatedAt=(res[0]&&res[0].updatedAt)||(res[1]&&res[1].updatedAt)||"";
+return {twse:res[0],tpex:res[1]};
 });
-}
-var done=i+batch.length;
-var pct=20+Math.round(done/stocks.length*70);
-spg(pct,"上市 EPS 載入中 "+done+"/"+stocks.length+"，已有 "+rows.length+" 筆");
-if(rows.length&&done%100===0){G.rows.twse=rows.slice();if(G.tab==="twse"){populateInd("twse");populateCon("twse");renderTable(getRows());}}
-if(!allCached&&i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
-}
-G.rows.twse=rows;
-G.dm=LATEST_Q;
-document.getElementById("hdrR").textContent="最新季度："+LATEST_Q;
-populateInd("twse");populateCon("twse");renderTable(getRows());
-cpg("上市：共 "+rows.length+" 檔，最新季度："+LATEST_Q);
+BASE.catch(function(){BASE=null;});
+return BASE;
 }
 
-async function loadTPEx(){
-spg(5,"取得上櫃股票清單與股價...");
-var infoRes=await pfetch(FINFO);
-var infoData=await infoRes.json();
-if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
-var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="tpex";});
-var seenIds={};
-stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
-spg(8,"取得上櫃股價資料...");
+// ---- Prices ---------------------------------------------------------------
+// G.px[market][code]={close,chg,pct}; G.pxDate[market]="YYYY-MM-DD"
+function applyPrices(mk,map,date){
+if(G.pxDate[mk]&&date&&date<G.pxDate[mk])return false;
+var out={};
+for(var code in map){var v=map[code],cl=v[0],ch=v[1],cp=null;
+if(cl!=null&&ch!=null&&ch!==0){var pv=cl-ch;if(pv!==0)cp=parseFloat((ch/Math.abs(pv)*100).toFixed(2));}else if(ch===0)cp=0;
+out[code]={close:cl,chg:ch,pct:cp};}
+G.px[mk]=out;G.pxDate[mk]=date||G.pxDate[mk]||"";
+return true;
+}
+function rocToIso(s){s=String(s||"").trim();if(!/^\d{7}$/.test(s))return"";return(parseInt(s.slice(0,3),10)+1911)+"-"+s.slice(3,5)+"-"+s.slice(5,7);}
+// One bulk request per market to pick up prices newer than the snapshot.
+var LIVE_PX={};
+function refreshLivePrices(mk){
+if(LIVE_PX[mk])return LIVE_PX[mk];
+var url=mk==="twse"?TPRC:TPEXC;
+// TPEx's OpenAPI intermittently answers with an HTML error page -> retry a few times.
+function getArr(n){return pfetch(url).then(function(r){return r.json();}).then(function(a){if(!Array.isArray(a)||!a.length)throw new Error("empty");return a;}).catch(function(e){if(n<=1)throw e;return new Promise(function(res){setTimeout(res,2000);}).then(function(){return getArr(n-1);});});}
+LIVE_PX[mk]=getArr(4).then(function(arr){
+if(!Array.isArray(arr))return;
+var map={},date="";
+arr.forEach(function(x){
+var code=String(mk==="twse"?x.Code:x.SecuritiesCompanyCode||"").trim();if(!ok4(code))return;
+var cl=pf(mk==="twse"?x.ClosingPrice:x.Close);if(cl==null||cl<=0)return;
+map[code]=[cl,pf(x.Change)];var d=rocToIso(x.Date);if(d>date)date=d;
+});
+if(!Object.keys(map).length)return;
+if(applyPrices(mk,map,date)){
+[mk,mk+"E"].forEach(function(t){(G.rows[t]||[]).forEach(setRowPrice.bind(null,mk));});
+(G.rows.watch||[]).forEach(function(r){setRowPrice(r.mk||"twse",r);});
+if(G.rows[G.tab]&&G.rows[G.tab].length)renderTable(getRows());
+}
+}).catch(function(e){console.warn("live price refresh failed",mk,e);});
+return LIVE_PX[mk];
+}
+function setRowPrice(mk,r){var p=(G.px[mk]||{})[r.sid]||(G.px[mk==="twse"?"tpex":"twse"]||{})[r.sid];r.close=p?p.close:null;r.chg=p?p.chg:null;r.pct=p?p.pct:null;}
+function curMarket(){return G.tab==="tpex"||G.tab==="tpexE"?"tpex":"twse";}
+function pxDateLabel(){var d=G.pxDate[curMarket()]||"";return d?d.slice(5,7)+"/"+d.slice(8,10):"";}
 
-spg(12,"取得 "+stocks.length+" 支上櫃股票，載入 EPS...");
-var startDate=(LATEST_YEAR-3)+"-01-01";
-var BATCH=15;
-var epsCacheJson=await loadEpsCache("tpex");
-var rows=[];
-for(var i=0;i<stocks.length;i+=BATCH){
-var batch=stocks.slice(i,i+BATCH);
-var priceStart=(new Date(new Date().setDate(new Date().getDate()-10))).toISOString().slice(0,10);
-var promises=batch.map(function(s){
-var priceUrl="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id="+s.stock_id+"&start_date="+priceStart;
-var pricePromise=pfetch(priceUrl).then(function(r){return r&&r.status===200?r.json().then(function(d){return d.data||[]}):[]}).catch(function(){return[]});
-var cq=cacheQMap(epsCacheJson,s.stock_id);
-if(cq&&hasQ(cq,LATEST_YEAR,LATEST_QN)){return pricePromise.then(function(pa){return{s:s,qMapCached:cq,priceArr:pa};});}
-var epsUrl=FEPS+s.stock_id+"&start_date="+startDate;
-var epsPromise=pfetch(epsUrl).then(function(r){return r&&r.status===200?r.json().then(function(d){return d.data||[]}):[]}).catch(function(){return[]});
-return Promise.all([epsPromise,pricePromise]).then(function(res){return{s:s,arr:res[0],priceArr:res[1]}});
-});
-var batchR=await Promise.all(promises);
-for(var b=0;b<batchR.length;b++){
-var rs=batchR[b];
-var qMap=rs.qMapCached||parseEpsData(rs.arr);
-var m=calcMetrics(qMap,LATEST_YEAR,LATEST_QN);
+// ---- Table builders ---------------------------------------------------------
+function buildRows(mk,cache,yr,qn){
+var rows=[],key=yr+"_"+qn;
+if(!cache||!cache.stocks)return rows;
+for(var id in cache.stocks){
+if(!ok4(id))continue;
+var s=cache.stocks[id];
+if(!okN(s.name||"")||!okN(s.industry||""))continue;
+var qMap=cacheQMap(cache,id);
+var m=qMap&&calcMetrics(qMap,yr,qn);
 if(!m)continue;
-var priceRec=rs.priceArr&&rs.priceArr.length?rs.priceArr[rs.priceArr.length-1]:null;
-var pr={close:priceRec?pf(priceRec.close):null,chg:priceRec?pf(priceRec.spread):null,pct:priceRec&&priceRec.close&&priceRec.spread!=null?parseFloat((priceRec.spread/(priceRec.close-priceRec.spread)*100).toFixed(2)):null};
-if(priceRec&&priceRec.date&&!G.priceDate){var pd=priceRec.date;G.priceDate=pd.slice(5,7)+"/"+pd.slice(8,10);}
-rows.push({
-sid:rs.s.stock_id,
-name:rs.s.stock_name||rs.s.stock_id,
-ind:rs.s.industry_category||"",
-close:pr.close||null,chg:pr.chg||null,pct:pr.pct||null,
-eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy
-});
+var r={sid:id,mk:mk,name:s.name||id,ind:s.industry||"",est:!!(s.est&&s.est[key]),
+eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy};
+setRowPrice(mk,r);
+rows.push(r);
 }
-var done=i+batch.length;
-var pct=12+Math.round(done/stocks.length*68);
-spg(pct,"上櫃 EPS 載入中 "+done+"/"+stocks.length+"，已有 "+rows.length+" 筆");
-if(rows.length&&done%150===0){G.rows.tpex=rows.slice();if(G.tab==="tpex"){populateInd("tpex");populateCon("tpex");renderTable(getRows());}}
-if(i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
+return rows;
 }
-G.rows.tpex=rows;
-G.dm=LATEST_Q;
-document.getElementById("hdrR").textContent="最新季度："+LATEST_Q;
-populateInd("tpex");populateCon("tpex");renderTable(getRows());
-cpg("上櫃：共 "+rows.length+" 檔，最新季度："+LATEST_Q);
+async function loadMarket(tab){
+var mk=tab==="tpex"||tab==="tpexE"?"tpex":"twse",early=tab.slice(-1)==="E";
+var base=await ensureBase();
+var yr=early?EARLY_YEAR:LATEST_YEAR,qn=early?EARLY_QN:LATEST_QN,ql=early?EARLY_Q:LATEST_Q;
+var rows=buildRows(mk,base[mk],yr,qn);
+G.rows[tab]=rows;
+G.dm=ql;
+var mkName=mk==="twse"?"上市":"上櫃";
+if(G.tab===tab){
+document.getElementById("hdrR").textContent=early?"搶先報 "+ql+"｜已公布 "+rows.length+" 檔":"最新季度："+ql;
+populateInd(tab);populateCon(tab);renderTable(getRows());
 }
-async function loadTWSEEarly(){
-spg(5,"取得上市股票清單與股價...");
-var r2=await pfetch(TPRC);
-var prcArr=await r2.json();
-spg(15,"取得上市 "+EARLY_Q+" EPS 搶先報資料...");
-var pm={};
-for(var i=0;i<prcArr.length;i++){
-var p2=prcArr[i];
-if(!ok4(p2.Code)||!okN(p2.Name||""))continue;
-var cl=pf(p2.ClosingPrice),ch=pf(p2.Change),cp=null;
-if(cl!=null&&ch!=null&&ch!==0){var pv=cl-ch;if(pv!==0)cp=parseFloat((ch/Math.abs(pv)*100).toFixed(2));}
-if(!G.priceDate&&p2.Date){G.priceDate=p2.Date.substring(3,5)+"/"+p2.Date.substring(5,7);}
-pm[p2.Code]={close:cl,chg:ch,pct:cp,name:p2.Name||"",ind:p2.IndustryCode||""};
+var upd=G.epsUpdatedAt?"（EPS 更新："+fmtTime(G.epsUpdatedAt)+"）":"";
+var msg=early?mkName+"搶先報：已公布 "+rows.length+" 檔（"+ql+"）"+upd:mkName+"：共 "+rows.length+" 檔，最新季度："+ql+upd;
+G.msg[tab]=msg;if(G.tab===tab)cpg(msg);
+refreshLivePrices(mk);
 }
-var infoRes=await pfetch(FINFO);
-var infoData=await infoRes.json();
-if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
-var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="twse"&&okN(s.industry_category||"")&&(s.industry_category||"").indexOf("\u5275\u65b0")<0;});
-var seenIds={};
-stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
-spg(20,"掃描上市 "+EARLY_Q+" 搶先公布中，共 "+stocks.length+" 支...");
-var startDate=(EARLY_YEAR-3)+"-01-01";
-var BATCH=15;
-var epsCacheJson=await loadEpsCache("twse");
-var rows=[];
-for(var i=0;i<stocks.length;i+=BATCH){
-var batch=stocks.slice(i,i+BATCH);var allCached=batch.every(function(s){var cq=cacheQMap(epsCacheJson,s.stock_id);return cq&&hasQ(cq,EARLY_YEAR,EARLY_QN);});
-var promises=batch.map(function(s){
-var cq=cacheQMap(epsCacheJson,s.stock_id);
-if(cq&&hasQ(cq,EARLY_YEAR,EARLY_QN)){return Promise.resolve({s:s,qMapCached:cq});}
-var url=FEPS+s.stock_id+"&start_date="+startDate;
-return pfetch(url).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){return{s:s,arr:d.status===200?(d.data||[]):[]}; });
-});
-var batchR=await Promise.all(promises);
-for(var b=0;b<batchR.length;b++){
-var rs=batchR[b];
-var qMap=rs.qMapCached||parseEpsData(rs.arr);
-var m=calcMetrics(qMap,EARLY_YEAR,EARLY_QN);
-if(!m)continue;
-var pr=pm[rs.s.stock_id]||{};
-rows.push({
-sid:rs.s.stock_id,
-name:rs.s.stock_name||pr.name||rs.s.stock_id,
-ind:rs.s.industry_category||"",
-close:pr.close||null,chg:pr.chg||null,pct:pr.pct||null,
-eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy
-});
-}
-var done=i+batch.length;
-var pct=20+Math.round(done/stocks.length*70);
-spg(pct,"上市 "+EARLY_Q+" 搶先報掃描中 "+done+"/"+stocks.length+"，已公布 "+rows.length+" 筆");
-if(rows.length&&done%100===0){G.rows.twseE=rows.slice();if(G.tab==="twseE"){populateInd("twseE");populateCon("twseE");renderTable(getRows());}}
-if(!allCached&&i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
-}
-G.rows.twseE=rows;
-if(G.tab==="twseE")document.getElementById("hdrR").textContent="搶先報 "+EARLY_Q+"｜已公布 "+rows.length+" 檔";
-populateInd("twseE");populateCon("twseE");renderTable(getRows());
-cpg("上市搶先報：已公布 "+rows.length+" 檔（"+EARLY_Q+"），持續更新中");
-}
+function fmtTime(iso){var d=new Date(new Date(iso).getTime()+8*3600000);if(isNaN(d))return"";return (d.getUTCMonth()+1)+"/"+d.getUTCDate()+" "+String(d.getUTCHours()).padStart(2,"0")+":"+String(d.getUTCMinutes()).padStart(2,"0");}
+function loadTWSE(){return loadMarket("twse");}
+function loadTPEx(){return loadMarket("tpex");}
+function loadTWSEEarly(){return loadMarket("twseE");}
+function loadTPExEarly(){return loadMarket("tpexE");}
 
-async function loadTPExEarly(){
-spg(5,"取得上櫃股票清單...");
-var infoRes=await pfetch(FINFO);
-var infoData=await infoRes.json();
-if(infoData.status===402){serr("FinMind API 請求已達上限，請稍候再試");return;}
-var stocks=(infoData.data||[]).filter(function(s){return ok4(s.stock_id)&&okN(s.stock_name||"")&&s.type==="tpex";});
-var seenIds={};
-stocks=stocks.filter(function(s){if(seenIds[s.stock_id])return false;seenIds[s.stock_id]=true;return true;});
-spg(12,"掃描上櫃 "+EARLY_Q+" 搶先公布中，共 "+stocks.length+" 支...");
-var startDate=(EARLY_YEAR-3)+"-01-01";
-var BATCH=15;
-var epsCacheJson=await loadEpsCache("tpex");
-var rows=[];
-for(var i=0;i<stocks.length;i+=BATCH){
-var batch=stocks.slice(i,i+BATCH);
-var priceStart=(new Date(new Date().setDate(new Date().getDate()-10))).toISOString().slice(0,10);
-var promises=batch.map(function(s){
-var priceUrl="https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id="+s.stock_id+"&start_date="+priceStart;
-var pricePromise=pfetch(priceUrl).then(function(r){return r&&r.status===200?r.json().then(function(d){return d.data||[]}):[]}).catch(function(){return[]});
-var cq=cacheQMap(epsCacheJson,s.stock_id);
-if(cq&&hasQ(cq,EARLY_YEAR,EARLY_QN)){return pricePromise.then(function(pa){return{s:s,qMapCached:cq,priceArr:pa};});}
-var epsUrl=FEPS+s.stock_id+"&start_date="+startDate;
-var epsPromise=pfetch(epsUrl).then(function(r){return r&&r.status===200?r.json().then(function(d){return d.data||[]}):[]}).catch(function(){return[]});
-return Promise.all([epsPromise,pricePromise]).then(function(res){return{s:s,arr:res[0],priceArr:res[1]}});
-});
-var batchR=await Promise.all(promises);
-for(var b=0;b<batchR.length;b++){
-var rs=batchR[b];
-var qMap=rs.qMapCached||parseEpsData(rs.arr);
-var m=calcMetrics(qMap,EARLY_YEAR,EARLY_QN);
-if(!m)continue;
-var priceRec=rs.priceArr&&rs.priceArr.length?rs.priceArr[rs.priceArr.length-1]:null;
-var pr={close:priceRec?pf(priceRec.close):null,chg:priceRec?pf(priceRec.spread):null,pct:priceRec&&priceRec.close&&priceRec.spread!=null?parseFloat((priceRec.spread/(priceRec.close-priceRec.spread)*100).toFixed(2)):null};
-if(priceRec&&priceRec.date&&!G.priceDate){var pd=priceRec.date;G.priceDate=pd.slice(5,7)+"/"+pd.slice(8,10);}
-rows.push({
-sid:rs.s.stock_id,
-name:rs.s.stock_name||rs.s.stock_id,
-ind:rs.s.industry_category||"",
-close:pr.close||null,chg:pr.chg||null,pct:pr.pct||null,
-eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy
-});
+async function fetchFinMindQMap(id){
+var startDate=(LATEST_YEAR-4)+"-01-01";
+var r=await pfetch(FEPS+id+"&start_date="+startDate);
+var d=await r.json();
+return d.status===200?parseEpsData(d.data||[]):null;
 }
-var done=i+batch.length;
-var pct=12+Math.round(done/stocks.length*68);
-spg(pct,"上櫃 "+EARLY_Q+" 搶先報掃描中 "+done+"/"+stocks.length+"，已公布 "+rows.length+" 筆");
-if(rows.length&&done%150===0){G.rows.tpexE=rows.slice();if(G.tab==="tpexE"){populateInd("tpexE");populateCon("tpexE");renderTable(getRows());}}
-if(i+BATCH<stocks.length)await new Promise(function(r){setTimeout(r,300);});
-}
-G.rows.tpexE=rows;
-if(G.tab==="tpexE")document.getElementById("hdrR").textContent="搶先報 "+EARLY_Q+"｜已公布 "+rows.length+" 檔";
-populateInd("tpexE");populateCon("tpexE");renderTable(getRows());
-cpg("上櫃搶先報：已公布 "+rows.length+" 檔（"+EARLY_Q+"），持續更新中");
+// Returns {qMap, info, mk} for a stock: cache first, FinMind only as fallback.
+async function getStockQMap(id){
+var base=await ensureBase();
+for(var mk in base){var c=base[mk];if(c&&c.stocks&&c.stocks[id]){var s=c.stocks[id];return{qMap:cacheQMap(c,id),name:s.name,ind:s.industry,mk:mk,est:s.est||{}};}}
+var q=null;try{q=await fetchFinMindQMap(id);}catch(e){}
+return{qMap:q,name:id,ind:"",mk:null,est:{}};
 }
 
 async function loadWatch(){
 var ids=G.wl;
 if(!ids.length){G.rows.watch=[];renderTable([]);cpg("自選股：尚未新增股票");return;}
-spg(5,"取得自選股 EPS 資料...");
-var infoRes=await pfetch(FINFO);
-var infoData=await infoRes.json();
-var infoMap={};
-(infoData.data||[]).forEach(function(s){if(ok4(s.stock_id))infoMap[s.stock_id]=s;});
-var r2=await pfetch(TPRC);
-var prcArr=await r2.json();
-var pm={};
-for(var i=0;i<prcArr.length;i++){
-var p2=prcArr[i];
-if(!ok4(p2.Code))continue;
-var cl=pf(p2.ClosingPrice),ch=pf(p2.Change),cp=null;
-if(cl!=null&&ch!=null&&ch!==0){var pv=cl-ch;if(pv!==0)cp=parseFloat((ch/Math.abs(pv)*100).toFixed(2));}
-pm[p2.Code]={close:cl,chg:ch,pct:cp};
-}
-var startDate=(LATEST_YEAR-3)+"-01-01";
-var pArr=ids.map(function(id){
-var url=FEPS+id+"&start_date="+startDate;
-var si=infoMap[id];
-return pfetch(url).then(function(r){return r.json();}).catch(function(){return{status:0,data:[]};}).then(function(d){
-var arr=d.status===200?(d.data||[]):[];
-var qMap=parseEpsData(arr);
-var m=calcMetrics(qMap,LATEST_YEAR,LATEST_QN);
-var pr=pm[id]||{};
-if(!m)return{sid:id,name:si?si.stock_name:id,ind:si?si.industry_category:"",close:pr.close||null,chg:pr.chg||null,pct:pr.pct||null,eps:null,qoq:null,yoy:null,cumeps:null,cumy:null};
-return{sid:id,name:si?si.stock_name:id,ind:si?si.industry_category:"",close:pr.close||null,chg:pr.chg||null,pct:pr.pct||null,eps:m.eps,qoq:m.qoq,yoy:m.yoy,cumeps:m.cumEps,cumy:m.cumy};
-}).catch(function(){return{sid:id,name:si?si.stock_name:id,ind:"",close:null,chg:null,pct:null,eps:null,qoq:null,yoy:null,cumeps:null,cumy:null};});
-});
-var rows=await Promise.all(pArr);
+spg(30,"取得自選股 EPS 資料...");
+await ensureBase();
+var rows=await Promise.all(ids.map(async function(id){
+var g=await getStockQMap(id);
+var m=g.qMap?calcMetrics(g.qMap,LATEST_YEAR,LATEST_QN):null;
+var r={sid:id,mk:g.mk||"twse",name:g.name||id,ind:g.ind||"",est:!!g.est[LATEST_YEAR+"_"+LATEST_QN],
+eps:m?m.eps:null,qoq:m?m.qoq:null,yoy:m?m.yoy:null,cumeps:m?m.cumEps:null,cumy:m?m.cumy:null};
+setRowPrice(r.mk,r);
+return r;
+}));
 G.rows.watch=rows;
 renderTable(getRows());
 cpg("自選股："+rows.length+" 支，最新季度："+LATEST_Q);
+refreshLivePrices("twse");refreshLivePrices("tpex");
 }
 function saveW(){localStorage.setItem("_tw_eps_w",JSON.stringify(G.wl));}
 function addW(){var inp=document.getElementById("wI"),code=inp.value.trim().toUpperCase();inp.value="";if(!code)return;if(!ok4(code)){alert("請輸入4~5碼數字股票代號");return;}if(G.wl.indexOf(code)>=0){alert(code+" 已在自選股");return;}G.wl.push(code);saveW();if(G.tab==="watch")loadWatch();}
@@ -543,7 +427,7 @@ th.setAttribute("data-k",col.k);
 th.onclick=(function(k){return function(){doSort(k);};})(col.k);
 if(G.sk===col.k)th.className+=(th.className?" ":"")+(G.sd==="asc"?"sa":"sd");
 var ico=G.sk===col.k?(G.sd==="asc"?"&#9650;":"&#9660;"):"&#8661;";
-th.innerHTML=(col.dynLb&&G.priceDate?G.priceDate+" ":"")+col.lb+'<span class="si">'+ico+'</span>';
+th.innerHTML=(col.dynLb&&pxDateLabel()?pxDateLabel()+" ":"")+col.lb+'<span class="si">'+ico+'</span>';
 tr.appendChild(th);
 }
 document.getElementById("th").innerHTML="";
@@ -553,7 +437,7 @@ document.getElementById("th").appendChild(tr);
 function renderBody(rows){
 var cols=getCols();
 var tbody=document.getElementById("tb");
-if(!rows.length){tbody.innerHTML='<tr><td colspan="'+cols.length+'" class="em">無資料（本季 EPS 尚未公告，或超出 API 配額）</td></tr>';return;}
+if(!rows.length){tbody.innerHTML='<tr><td colspan="'+cols.length+'" class="em">無資料（'+((G.tab==="twseE"||G.tab==="tpexE")?EARLY_Q+" 尚無公司公布 EPS":"本季 EPS 尚未公告")+'）</td></tr>';return;}
 var frag=document.createDocumentFragment();
 for(var i=0;i<rows.length;i++){
 var row=rows[i],tr=document.createElement("tr");
@@ -568,7 +452,7 @@ else if(k==="ind"){td.className="l";td.textContent=row.ind||"";}
 else if(k==="close"){td.textContent=f2(row.close);}
 else if(k==="chg"){td.className=cc(row.chg);td.textContent=row.chg!=null?(row.chg>0?"+":"")+f2(row.chg):"--";}
 else if(k==="pct"){td.className=cc(row.pct);td.textContent=fp(row.pct);}
-else if(k==="eps"){td.className=cc(row.eps);td.textContent=row.eps!=null?f2(row.eps):"--";}
+else if(k==="eps"){td.className=cc(row.eps);td.textContent=row.eps!=null?f2(row.eps):"--";if(row.est&&row.eps!=null){var es=document.createElement("sup");es.className="est";es.textContent="*";es.title="暫估：由官方累計 EPS 推算，待正式單季數字確認";td.appendChild(es);}}
 else if(k==="qoq"){td.className=cc(row.qoq);td.textContent=fp(row.qoq);}
 else if(k==="yoy"){td.className=cc(row.yoy);td.textContent=fp(row.yoy);}
 else if(k==="cumeps"){td.textContent=row.cumeps!=null?f2(row.cumeps):"--";}
@@ -628,11 +512,12 @@ document.getElementById("toolF").style.display=isW?"none":"flex";
 document.getElementById("indS").value="";
 if(document.getElementById("conS"))document.getElementById("conS").value="";
 if(tab==="twseE"||tab==="tpexE"){document.getElementById("hdrR").textContent="搶先報 "+EARLY_Q+(G.rows[tab]&&G.rows[tab].length?"｜已公布 "+G.rows[tab].length+" 檔":"");}else{document.getElementById("hdrR").textContent="最新季度："+LATEST_Q;}
-if(G.rows[tab]&&G.rows[tab].length>0){if(!isW){populateInd(tab);populateCon(tab);}renderTable(getRows());}
+if(G.rows[tab]&&G.rows[tab].length>0){if(!isW){populateInd(tab);populateCon(tab);}renderTable(getRows());if(G.msg[tab])cpg(G.msg[tab]);}
 else{loadData();}
 }
 async function loadData(){try{if(G.tab==="twse")await loadTWSE();else if(G.tab==="tpex")await loadTPEx();else if(G.tab==="twseE")await loadTWSEEarly();else if(G.tab==="tpexE")await loadTPExEarly();else await loadWatch();}catch(e){serr("載入失敗："+e.message);console.error(e);}}
-function reload(){G.rows[G.tab]=[];loadData();}
+function resetCaches(){EPS_CACHE={};BASE=null;LIVE_PX={};["twse","tpex","watch","twseE","tpexE"].forEach(function(t){G.rows[t]=[];});}
+function reload(){resetCaches();loadData();}
 function getTblData(){
 var rows=getRows();
 var cols=getCols();
@@ -739,16 +624,13 @@ document.getElementById("mo").style.display="flex";document.body.style.overflow=
 document.getElementById("mo-title").innerHTML=row.sid+' <span style="color:#555;font-weight:500">'+row.name+'</span>'+(row.ind?'<span style="font-size:13px;color:#888;margin-left:8px">'+row.ind+'</span>':'');
 document.getElementById("mo-body").innerHTML='<div class="em">載入歷史 EPS 中...</div>';
 document.getElementById("mo-ytabs").innerHTML="";
-var startDate=(LATEST_YEAR-4)+"-01-01";
-var url=FEPS+row.sid+"&start_date="+startDate;
 try{
-var res=await pfetch(url);
-var d=await res.json();
-var arr=(d.status===200)?(d.data||[]):[];
-var qMap=parseEpsData(arr);
+var g=await getStockQMap(row.sid);
+var qMap=g.qMap||{};
 var hist=[];
-for(var y=LATEST_YEAR;y>=LATEST_YEAR-3;y--){
-for(var qn=(y===LATEST_YEAR?LATEST_QN:4);qn>=1;qn--){
+var topY=hasQ(qMap,EARLY_YEAR,EARLY_QN)?EARLY_YEAR:LATEST_YEAR,topQ=hasQ(qMap,EARLY_YEAR,EARLY_QN)?EARLY_QN:LATEST_QN;
+for(var y=topY;y>=topY-3;y--){
+for(var qn=(y===topY?topQ:4);qn>=1;qn--){
 var key=y+"_"+qn;
 var q=qMap[key];
 if(!q||q.eps==null)continue;
@@ -765,7 +647,7 @@ MO.qMap=qMap;
 // Build year tabs: show last 3 years + "全部"
 var ytabs=document.getElementById("mo-ytabs");
 ytabs.innerHTML="";
-var tabDefs=[{lb:"全部",yr:0},{lb:LATEST_YEAR+"年",yr:LATEST_YEAR},{lb:(LATEST_YEAR-1)+"年",yr:LATEST_YEAR-1},{lb:(LATEST_YEAR-2)+"年",yr:LATEST_YEAR-2}];
+var tabDefs=[{lb:"全部",yr:0},{lb:topY+"年",yr:topY},{lb:(topY-1)+"年",yr:topY-1},{lb:(topY-2)+"年",yr:topY-2}];
 tabDefs.forEach(function(t){
 var btn=document.createElement("button");
 btn.className="mo-tab"+(MO.yr===0&&t.yr===0?" on":MO.yr===4&&t.yr===0?" on":"");
@@ -865,7 +747,7 @@ var diff=(targets[i]-h)*3600000-m*60000-s*1000;
 if(diff>0&&(msUntilNext===null||diff<msUntilNext))msUntilNext=diff;
 }
 if(msUntilNext===null)msUntilNext=(43-h)*3600000-m*60000-s*1000;
-setTimeout(function(){loadData();scheduleRefresh();},msUntilNext);
+setTimeout(function(){resetCaches();loadData();scheduleRefresh();},msUntilNext);
 }
 scheduleRefresh();
 });
