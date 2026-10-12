@@ -4,20 +4,25 @@ Taiwan Stock Quarterly EPS Ranking System
 
 ## 系統架構
 
-**前端**：純 HTML/CSS/Vanilla JavaScript 單頁應用（index.html），無框架、無建置流程。
+**前端**：純 HTML/CSS/Vanilla JavaScript 單頁應用（index.html），無框架、無建置流程。開啟頁面只讀取快取 JSON（`data/eps-*.json`、`data/prices.json`），全市場表格約 1–2 秒內完成；上市 / 上櫃 / 搶先報分頁都從同一份資料篩選，切換分頁不再發送新的網路請求。
 
-**資料快取**：scripts/fetch-eps.js 由 GitHub Actions（update-eps.yml）平日排程執行，向 FinMind 抓取 EPS 並寫入 data/eps-twse.json、data/eps-tpex.json（可續傳設計，已有當季數值會跳過）。
+**季度自動判斷**：最新季度＝快取中已有半數以上公司公布的最新一季，搶先報＝下一季（例如 26Q2 → 搶先報 26Q3），不再寫死於程式碼。
 
-**即時股價代理**：functions/api/proxy.js（Cloudflare Pages Function）作 CORS 代理；部署於非 pages.dev 網域（如目前的 GitHub Pages）時，改用公開的 corsproxy.io 備援。
+**EPS 快取**：`scripts/fetch-eps.js` 由 GitHub Actions（update-eps.yml）平日 08:17、15:17–22:17 每小時執行：
+1. **官方批次端點**（每次數個請求）：TWSE `t187ap06_L_*`、`t187ap14_L`，TPEx `mopsfin_t187ap06_O_*`。端點提供的是年初至今累計 EPS，單季值以「本季累計 − 前幾季單季合計」推算，標記為暫估（表格 EPS 旁的橘色 `*`）。
+2. **FinMind 補正**（每次上限 400 檔）：只查詢「暫估值」與「缺最新季」的股票取得正式單季 EPS，每檔 20 小時內不重複查詢。
 
-**載入行為**：主表與搶先報分頁皆採用相同機制，以每批 15 檔、批次間隔約 300ms 的方式逐檔比對快取並視需要補抓資料。股票數量多時（上市約 1200 多檔），完整表格填滿實測需數分鐘；切換到搶先報分頁會針對下一季再跑一次同樣的全市場迴圈，因此同樣需要數分鐘才能完整載入，並非讀取既有資料就能即時顯示。
+**股價快取**：`scripts/fetch-prices.js`（update-prices.yml，平日 19:00、20:00）以 TWSE `STOCK_DAY_ALL` 與 TPEx `tpex_mainboard_quotes` 兩個批次請求寫入 `data/prices.json`；前端開啟後另以同樣的兩個端點各補抓一次較新的股價。
+
+**CORS 代理**：functions/api/proxy.js（Cloudflare Pages Function），非 pages.dev 網域時改用 corsproxy.io 備援。
 
 ## 功能特色
 
-- 📊 **每股盈餘 EPS 排行**：最新一季（26Q1）上市 / 上櫃全覽
+- 📊 **每股盈餘 EPS 排行**：最新一季上市 / 上櫃全覽（季度自動判斷）
 - 📈 **季增率（QoQ）**：與前一季比較
 - 📅 **年增率（YoY）**：與去年同季比較
-- 🔢 **累季年增率**：Q1 累積 EPS 年增率
+- 🔢 **累季年增率**：年初至今累積 EPS 年增率
+- ⚡ **每股盈餘搶先報**：下一季已公布公司即時列出
 - 🔍 **產業篩選**：按產業類別過濾
 - ⭐ **自選股**：追蹤個人關注股票
 - 📉 **歷史圖表**：點擊個股查看最近 12 季 EPS 走勢（SVG 長條圖）
@@ -27,14 +32,12 @@ Taiwan Stock Quarterly EPS Ranking System
 
 ## 資料來源
 
-- **FinMind API** — 季度 EPS（TaiwanStockFinancialStatements）
-- **TWSE OpenAPI** — 收盤價
-- **FinMind API** — 股票清單（TaiwanStockInfo）
+- **TWSE / TPEx OpenAPI** — 全市場最新一季累計 EPS、收盤價
+- **FinMind API** — 季度 EPS 歷史與正式單季值（TaiwanStockFinancialStatements）、股票清單（TaiwanStockInfo，僅 Actions 使用）
 
 ## 使用方式
 
-直接訪問 GitHub Pages：  
-https://mywu-cloud.github.io/fineps/
+https://fineps.pages.dev/
 
 ## 色彩規範（台股慣例）
 
