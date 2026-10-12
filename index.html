@@ -254,7 +254,9 @@ var LIVE_PX={};
 function refreshLivePrices(mk){
 if(LIVE_PX[mk])return LIVE_PX[mk];
 var url=mk==="twse"?TPRC:TPEXC;
-LIVE_PX[mk]=pfetch(url).then(function(r){return r.json();}).then(function(arr){
+// TPEx's OpenAPI intermittently answers with an HTML error page -> retry a few times.
+function getArr(n){return pfetch(url).then(function(r){return r.json();}).then(function(a){if(!Array.isArray(a)||!a.length)throw new Error("empty");return a;}).catch(function(e){if(n<=1)throw e;return new Promise(function(res){setTimeout(res,2000);}).then(function(){return getArr(n-1);});});}
+LIVE_PX[mk]=getArr(4).then(function(arr){
 if(!Array.isArray(arr))return;
 var map={},date="";
 arr.forEach(function(x){
